@@ -2838,6 +2838,7 @@ public class ScanViewActivity extends Activity {
         //------------------------------------------------------------------------------------------------------------
         calProgress.setVisibility(View.GONE);
         progressBarinsideText.setVisibility(View.GONE);
+
         // 当启用了双面扫描，且当前为第一阶段时
         if (doubleSidedScanning && IsScanPhase_1){
             IsScanPhase_1 = false;
@@ -3346,7 +3347,8 @@ public class ScanViewActivity extends Activity {
         String compositionNameAndNumber = getCompositionAndNumberString();
         // 将文件序号加入文件名中
         String fileNum = fileNumber.getText().toString();
-
+        // 将样品编号加入文件命名中
+        String sampleNum = et_simple_number.getText().toString();
         String csvOS= "";
         CSV[26][9] = "Error Details:,";
 
@@ -3354,12 +3356,16 @@ public class ScanViewActivity extends Activity {
         if(HaveError)
         {
             CSV[26][10] = ErrorByteTransfer();
-            csvOS = mSDFile.getParent() + "/" + mSDFile.getName() + "/ISC_Report/" + prefix + "_" + configname + "_" + compositionNameAndNumber + "_" + CurrentTime + "_Error_Detected_" + fileNum + ".csv";
+            csvOS = mSDFile.getParent() + "/" + mSDFile.getName() + "/ISC_Report/" + prefix +
+                    "_" + configname + "_" + compositionNameAndNumber + "_" + sampleNum + "_" +
+                    CurrentTime + "_Error_Detected_" + fileNum + ".csv";
         }
         else
         {
             CSV[26][10] = "Not Found,";
-            csvOS = mSDFile.getParent() + "/" + mSDFile.getName() + "/ISC_Report/" + prefix+"_" + configname + "_" + compositionNameAndNumber + "_" + CurrentTime + "_" + fileNum + ".csv";
+            csvOS = mSDFile.getParent() + "/" + mSDFile.getName() + "/ISC_Report/" + prefix +
+                    "_" + configname + "_" + compositionNameAndNumber + "_"+ sampleNum + "_" +
+                    CurrentTime + "_" + fileNum + ".csv";
         }
 
         try {
@@ -3429,9 +3435,12 @@ public class ScanViewActivity extends Activity {
             String compositionNameAndNumber = getCompositionAndNumberString();
             // 将文件序号加入文件名中
             String fileNum = fileNumber.getText().toString();
+            // 将样品编号加入文件命名中
+            String sampleNum = et_simple_number.getText().toString();
 
             ContentValues values = new ContentValues();
-            values.put(MediaStore.MediaColumns.DISPLAY_NAME, prefix+"_" + configname + "_" + compositionNameAndNumber + "_" + CurrentTime + "_" + fileNum + ".csv");       //file name
+            values.put(MediaStore.MediaColumns.DISPLAY_NAME, prefix+"_" + configname + "_" +
+                    compositionNameAndNumber +  "_" + sampleNum + "_" + CurrentTime + "_" + fileNum + ".csv");       //file name
             values.put(MediaStore.MediaColumns.MIME_TYPE, "text/comma-separated-values");
             values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS + "/ISC_Report/");
             Uri uri = getContentResolver().insert(MediaStore.Files.getContentUri("external"), values);

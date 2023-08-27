@@ -1,0 +1,99 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FBFBFB"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="780dp"
+        android:layout_marginStart="@dimen/dip8"
+        android:layout_marginEnd="@dimen/dip8"
+        android:layout_weight="1"
+        android:translationY="100dp">
+
+        <ImageButton
+            android:id="@+id/main_connect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            android:layout_centerHorizontal="true"
+            android:background="#00000000"
+            android:src="@drawable/scan_flatx_isc" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center|top"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/not_warmup"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:background="#00FFFFFF"
+                android:scaleType="fitXY"
+                android:src="@drawable/not_warmup_checked" />
+
+            <ImageButton
+                android:id="@+id/warmup"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:background="#00FFFFFF"
+                android:scaleType="fitXY"
+                android:src="@drawable/warmup_unchecked" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_graph_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin">
+
+        <ImageButton
+            android:id="@+id/main_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/main_setting"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="22dp"
+            android:background="#00000000"
+            android:src="@drawable/info_flatx" />
+
+        <ImageButton
+            android:id="@+id/main_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="13dp"
+            android:background="#00000000"
+            android:src="@drawable/setting_flatx" />
+
+        <TextView
+            android:id="@+id/isAdminMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="false"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentRight="false"
+            android:layout_alignParentBottom="true"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:textColor="#979797" />
+
+    </RelativeLayout>
+
+</LinearLayout>
