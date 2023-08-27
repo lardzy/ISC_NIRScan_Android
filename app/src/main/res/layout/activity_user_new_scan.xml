@@ -1,26 +1,30 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     android:gravity="bottom"
     android:orientation="vertical"
     tools:context="com.Innospectra.NanoScan.ScanViewActivity">
 
     <RelativeLayout
+        android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="330dp"
-        android:layout_marginStart="@dimen/dip16"
-        android:layout_marginTop="@dimen/dip16"
-        android:layout_marginEnd="@dimen/dip16"
-        android:layout_weight="1">
+        android:layout_height="200dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:layout_weight="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/empty_result" />
+            android:layout_height="match_parent" />
 
         <ProgressBar
             android:id="@+id/calProgress"
@@ -42,224 +46,247 @@
 
     </RelativeLayout>
 
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:layout_weight="1"
-        android:background="@drawable/empty_result"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/dip8"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingBottom="@dimen/dip8">
+    <View
+        android:id="@+id/view"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:background="@drawable/result_background"
+        android:translationY="30dp"
+        app:layout_constraintBottom_toTopOf="@id/cl_resultView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <android.support.constraint.ConstraintLayout
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_resultView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:background="@drawable/empty_result"
+        app:layout_constraintBottom_toTopOf="@id/btn_scanAndPredict"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/relativeLayout">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:layout_margin="128dp"
+            android:indeterminate="true"
+            android:indeterminateTint="#0697FE"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="32dp" />
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="@dimen/dip48"
-                android:indeterminate="true"
-                android:indeterminateTint="#0697FE"
-                app:layout_constraintTop_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="32dp" />
-
-            <ListView
-                android:id="@+id/resultListView"
-                style="@style/Widget.AppCompat.Light.ListView.DropDown"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:background="#A60697FE"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
-    </ScrollView>
-
-
-    <RelativeLayout
-        android:id="@+id/rl_graph_list"
-        android:layout_width="match_parent"
-        android:layout_height="350dp"
-        android:layout_weight="1"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/dip8"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingBottom="@dimen/dip8">
-
-
-        <ScrollView
-            android:id="@+id/layout_normal"
+        <ListView
+            android:id="@+id/resultListView"
+            style="@style/Widget.AppCompat.Light.ListView.DropDown"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
-            <RelativeLayout
+    <com.Innospectra.NanoScan.SlideUpLayout
+        android:id="@+id/SlideUpLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/btn_scanAndPredict"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/SlideUpLayoutBar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/slider_background">
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/SlideUpLayoutContent"
+            android:layout_width="wrap_content"
+            android:layout_height="130dp"
+            android:background="#FFFFFF">
+
+            <ScrollView
+                android:id="@+id/layout_normal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="308dp">
 
-                <LinearLayout
-                    android:id="@+id/ll_fileNumberLayout"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusableInTouchMode="true"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content">
 
-                    <TextView
-                        android:id="@+id/tv_number"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/ll_fileNumberLayout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.9"
-                        android:text="@string/file_number"
-                        android:textSize="18sp" />
+                        android:focusableInTouchMode="true"
+                        android:orientation="horizontal">
 
-                    <EditText
-                        android:id="@+id/fileNumber"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/tv_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.9"
+                            android:text="@string/file_number"
+                            android:textSize="18sp" />
+
+                        <EditText
+                            android:id="@+id/fileNumber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.1"
+                            android:ems="4"
+                            android:inputType="number"
+                            android:singleLine="true" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/px1"
+                        android:layout_below="@id/ll_fileNumberLayout"
+                        android:background="@color/gray" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_user"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.1"
-                        android:ems="4"
-                        android:inputType="number"
-                        android:singleLine="true" />
+                        android:layout_below="@id/ll_fileNumberLayout"
+                        android:focusableInTouchMode="true">
 
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/tv_prefix"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/user_name"
+                            android:textAppearance="?android:textAppearanceMedium" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/px1"
-                    android:layout_below="@id/ll_fileNumberLayout"
-                    android:background="@color/gray" />
+                        <EditText
+                            android:id="@+id/et_prefix"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ems="6"
+                            android:hint="ISC"
+                            android:singleLine="true" />
 
-                <LinearLayout
-                    android:id="@+id/ll_user"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/ll_fileNumberLayout"
-                    android:focusableInTouchMode="true">
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tv_prefix"
-                        android:layout_width="wrap_content"
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/px1"
+                        android:layout_below="@id/ll_user"
+                        android:background="@color/gray" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_conf"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/user_name"
-                        android:textAppearance="?android:textAppearanceMedium" />
+                        android:layout_below="@id/ll_user"
+                        android:gravity="center"
+                        android:minHeight="@dimen/dip40">
 
-                    <EditText
-                        android:id="@+id/et_prefix"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/tv_conf"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/scan_conf"
+                            android:textAppearance="?android:textAppearanceMedium" />
+
+                        <TextView
+                            android:id="@+id/tv_scan_conf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/col_1"
+                            android:textAppearance="?android:textAppearanceMedium" />
+
+                    </LinearLayout>
+
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/px1"
+                        android:layout_below="@id/ll_conf"
+                        android:background="@color/gray" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_doubleSideScan"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:ems="6"
-                        android:hint="ISC"
-                        android:singleLine="true" />
+                        android:layout_below="@id/ll_conf">
 
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/tv_normal_continuous"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/double_side_scan"
+                            android:textAppearance="?android:textAppearanceMedium" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/px1"
-                    android:layout_below="@id/ll_user"
-                    android:background="@color/gray" />
+                        <ToggleButton
+                            android:id="@+id/btn_doubleside"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/dip40"
+                            android:textOff="关闭"
+                            android:textOn="启用" />
 
-                <LinearLayout
-                    android:id="@+id/ll_conf"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/ll_user"
-                    android:gravity="center"
-                    android:minHeight="@dimen/dip40">
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tv_conf"
-                        android:layout_width="0dp"
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/px1"
+                        android:layout_below="@id/ll_doubleSideScan"
+                        android:background="@color/gray" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_double_side"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/scan_conf"
-                        android:textAppearance="?android:textAppearanceMedium" />
+                        android:layout_below="@id/ll_doubleSideScan">
 
-                    <TextView
-                        android:id="@+id/tv_scan_conf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/col_1"
-                        android:textAppearance="?android:textAppearanceMedium" />
+                        <TextView
+                            android:id="@+id/tv_double_side"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/verification_data"
+                            android:textAppearance="?android:textAppearanceMedium" />
 
-                </LinearLayout>
+                        <ToggleButton
+                            android:id="@+id/btn_verification"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/dip40"
+                            android:textOff="关闭"
+                            android:textOn="启用" />
 
+                    </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/px1"
-                    android:layout_below="@id/ll_conf"
-                    android:background="@color/gray" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/px1"
+                        android:layout_below="@id/ll_double_side"
+                        android:background="@color/gray" />
+                </RelativeLayout>
+            </ScrollView>
+        </android.support.constraint.ConstraintLayout>
 
-                <LinearLayout
-                    android:id="@+id/ll_doubleSideScan"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/ll_conf">
-
-                    <TextView
-                        android:id="@+id/tv_normal_continuous"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/double_side_scan"
-                        android:textAppearance="?android:textAppearanceMedium" />
-
-                    <ToggleButton
-                        android:id="@+id/btn_doubleside"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/dip40"
-                        android:textOff="关闭"
-                        android:textOn="启用" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/px1"
-                    android:layout_below="@id/ll_doubleSideScan"
-                    android:background="@color/gray" />
-
-                <LinearLayout
-                    android:id="@+id/ll_double_side"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/ll_doubleSideScan">
-
-                    <TextView
-                        android:id="@+id/tv_double_side"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/verification_data"
-                        android:textAppearance="?android:textAppearanceMedium" />
-
-                    <ToggleButton
-                        android:id="@+id/btn_verification"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/dip40"
-                        android:textOff="关闭"
-                        android:textOn="启用" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/px1"
-                    android:layout_below="@id/ll_continuous_stop"
-                    android:background="@color/gray" />
-            </RelativeLayout>
-        </ScrollView>
-
-    </RelativeLayout>
+    </com.Innospectra.NanoScan.SlideUpLayout>
 
 
     <Button
@@ -267,13 +294,15 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="@dimen/dip8"
         android:background="@drawable/scan_button"
         android:text="@string/scan_predict"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="24sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

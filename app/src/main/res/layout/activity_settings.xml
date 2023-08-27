@@ -183,7 +183,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:checked="true"
+            android:checked="false"
             android:paddingRight="40px" />
 
         <TextView

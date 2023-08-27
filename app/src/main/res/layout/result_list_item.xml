@@ -3,8 +3,13 @@
     android:id="@android:id/text1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/result_lv_background"
+    android:fontFamily="sans-serif-black"
     android:gravity="center_vertical"
     android:minHeight="@dimen/dip32"
-    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+    android:padding="@dimen/dip48"
+    android:textAlignment="textStart"
+    android:textAllCaps="false"
+    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+    android:textColor="#2C4161"
+    android:textSize="20sp" />

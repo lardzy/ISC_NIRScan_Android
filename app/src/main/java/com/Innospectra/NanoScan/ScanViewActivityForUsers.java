@@ -42,6 +42,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
@@ -60,7 +61,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -386,7 +386,7 @@ public class ScanViewActivityForUsers extends Activity {
         }
     };
     private TextView tv_normal_scan_conf;
-    private ScrollView scrollView;
+    private ConstraintLayout constraintLayout;
     //endregion
     //region After connect to device
     private ScanMethod Current_Scan_Method = ScanMethod.Normal;
@@ -469,11 +469,14 @@ public class ScanViewActivityForUsers extends Activity {
             // TODO: 2023/8/25 这里记得清空row_data和post_data
             row_data = new String[229];
             showResult.clear();
+            adapter.notifyDataSetChanged();
             if (IsScanPhase_1){
                 post_data.clear();
             }
             // 关闭scrollview的背景图
-            scrollView.setBackgroundColor(Color.TRANSPARENT);
+//            constraintLayout.setBackgroundColor(Color.TRANSPARENT);
+            // 关闭结果背景图
+            constraintLayout.setBackgroundColor(Color.TRANSPARENT);
             // 隐藏上次扫描结果listview
             resultListView.setVisibility(View.INVISIBLE);
 
@@ -935,11 +938,11 @@ public class ScanViewActivityForUsers extends Activity {
         // 扫描结果ListView
         resultListView = findViewById(R.id.resultListView);
         progressBar = findViewById(R.id.progressBar);
-        scrollView = findViewById(R.id.scrollView);
+        constraintLayout = findViewById(R.id.cl_resultView);
         resultListView.setAdapter(adapter);
 
         progressBar.setVisibility(View.INVISIBLE);
-        resultListView.setVisibility(View.INVISIBLE);
+        resultListView.setVisibility(View.VISIBLE);
 
     }
 
@@ -1104,6 +1107,7 @@ public class ScanViewActivityForUsers extends Activity {
         } else {
             // 显示预测结果
             resultListView.setVisibility(View.VISIBLE);
+//            resultListView.setBackgroundColor(Color.TRANSPARENT);
             // 发送POST请求到API接口
             postCsvData(post_data);
             // 将当前的文件编号加1
@@ -1199,14 +1203,15 @@ public class ScanViewActivityForUsers extends Activity {
                 JSONArray innerArray = jsonArray.getJSONArray(i);
                 String fileName = innerArray.getString(0);
 //                System.out.println("File Name: " + fileName);
-                showResult.add("文件名：" + fileName);
+                String result = "样品" + (i + 1) +"：" + fileName;
+                result += "\n";
                 // 提取成分数据
                 for (int j = 1; j < innerArray.length(); j++) {
                     String component = innerArray.getString(j);
                     System.out.println("Component: " + component);
-                    showResult.add("成分" + j + "：" + component);
+                    result += "\n成分" + j + "：" + component;
                 }
-
+                showResult.add(result);
             }
         } catch (JSONException e) {
             e.printStackTrace();
