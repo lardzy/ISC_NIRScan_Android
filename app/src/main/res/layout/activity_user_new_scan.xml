@@ -60,7 +60,7 @@
         android:id="@+id/cl_resultView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_gravity="center"
+        android:layout_gravity="top"
         android:background="@drawable/empty_result"
         app:layout_constraintBottom_toTopOf="@id/btn_scanAndPredict"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -85,11 +85,9 @@
             style="@style/Widget.AppCompat.Light.ListView.DropDown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 

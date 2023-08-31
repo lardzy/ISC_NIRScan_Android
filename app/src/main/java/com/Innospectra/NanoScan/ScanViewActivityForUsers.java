@@ -1202,14 +1202,12 @@ public class ScanViewActivityForUsers extends Activity {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONArray innerArray = jsonArray.getJSONArray(i);
                 String fileName = innerArray.getString(0);
-//                System.out.println("File Name: " + fileName);
-                String result = "样品" + (i + 1) +"：" + fileName;
-                result += "\n";
+                String result =  (i + 1) +"：" + fileName;
                 // 提取成分数据
                 for (int j = 1; j < innerArray.length(); j++) {
                     String component = innerArray.getString(j);
                     System.out.println("Component: " + component);
-                    result += "\n成分" + j + "：" + component;
+                    result += "\n" + component;
                 }
                 showResult.add(result);
             }

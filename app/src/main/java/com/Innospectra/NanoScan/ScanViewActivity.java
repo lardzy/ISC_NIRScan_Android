@@ -2499,14 +2499,18 @@ public class ScanViewActivity extends Activity {
             }
 
             // 检查含量总数是否为100
-            if (EditTextToNum(editTextNumber) +
+            double epsilon = 0.0001;
+            double total = EditTextToNum(editTextNumber) +
                     EditTextToNum(editTextNumber_1) +
                     EditTextToNum(editTextNumber_2) +
                     EditTextToNum(editTextNumber_3) +
-                    EditTextToNum(editTextNumber_4) != 100) {
+                    EditTextToNum(editTextNumber_4);
+
+            if (Math.abs(total - 100.0) > epsilon) {
                 Dialog_Pane("错误", "化学值总数必须为100！");
                 return;
             }
+
             // 检查文件编号是否为空
             if (fileNumber.getText().toString().isEmpty()) {
                 Dialog_Pane("错误", "请填写文件编号！");
@@ -2611,9 +2615,13 @@ public class ScanViewActivity extends Activity {
         if (editText.getText().toString().isEmpty()) {
             return 0;
         } else {
-            return Double.parseDouble(editText.getText().toString());
+            double value = Double.parseDouble(editText.getText().toString());
+            return value;
         }
     }
+//    private double roundToOneDecimal(double value) {
+//        return Math.round(value * 10.0) / 10.0;
+//    }
     /**
      * Send broadcast  START_SCAN will  through ScanStartedReceiver  to notify scanning(PerformScan should be called)
      */
