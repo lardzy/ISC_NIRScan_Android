@@ -42,6 +42,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
@@ -60,9 +61,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.ISCSDK.ISCNIRScanSDK;
 import com.github.mikephil.charting.animation.Easing;
@@ -76,6 +77,9 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.opencsv.CSVWriter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -286,6 +290,10 @@ public class ScanViewActivityForUsers extends Activity {
     private float maxReference = 7000;
     private int numSections = 0;
 
+    // 双面扫描切换按钮
+    private ToggleButton btn_doubleside;
+    private ToggleButton btn_verification;
+    // 双面扫描结果校验按钮
     // 开始扫描按钮
     private Button btn_scanAndPredict;    //region Scan device and connect
     //Manage service lifecycle
@@ -378,7 +386,7 @@ public class ScanViewActivityForUsers extends Activity {
         }
     };
     private TextView tv_normal_scan_conf;
-    private ScrollView scrollView;
+    private ConstraintLayout constraintLayout;
     //endregion
     //region After connect to device
     private ScanMethod Current_Scan_Method = ScanMethod.Normal;
@@ -387,7 +395,11 @@ public class ScanViewActivityForUsers extends Activity {
     private byte[] refCoeff;
     private byte[] refMatrix;
     private Boolean WarmUp = false;
-    private final Boolean doubleSidedScanning = false;
+    // 是否启用双面扫描
+    private Boolean doubleSidedScanning = false;
+    // 是否启用双面含量校对
+    private Boolean doubleSidedContentVerification = false;
+    // 当前是否是双面扫描第一阶段
     private Boolean IsScanPhase_1 = true;
     private final Button.OnClickListener Continuous_Scan_Stop_Click = new Button.OnClickListener() {
         @Override
@@ -457,10 +469,14 @@ public class ScanViewActivityForUsers extends Activity {
             // TODO: 2023/8/25 这里记得清空row_data和post_data
             row_data = new String[229];
             showResult.clear();
-            post_data.clear();
-
+            adapter.notifyDataSetChanged();
+            if (IsScanPhase_1){
+                post_data.clear();
+            }
             // 关闭scrollview的背景图
-            scrollView.setBackgroundColor(Color.TRANSPARENT);
+//            constraintLayout.setBackgroundColor(Color.TRANSPARENT);
+            // 关闭结果背景图
+            constraintLayout.setBackgroundColor(Color.TRANSPARENT);
             // 隐藏上次扫描结果listview
             resultListView.setVisibility(View.INVISIBLE);
 
@@ -548,7 +564,8 @@ public class ScanViewActivityForUsers extends Activity {
         WarmUp = bundle.getBoolean("warmup");
         storeBooleanPref(mContext, ISCNIRScanSDK.SharedPreferencesKeys.LockButton, false);
         // Set up the action bar.
-
+        // 载入服务器API地址和key的自定义数据、启用双面扫描状态、启用双面含量校对、检验员姓名
+        loadData();
         calProgress = findViewById(R.id.calProgress);
         calProgress.setVisibility(View.VISIBLE);
         progressBarinsideText = findViewById(R.id.progressBarinsideText);
@@ -556,19 +573,18 @@ public class ScanViewActivityForUsers extends Activity {
 
         filePrefix = findViewById(R.id.et_prefix);
         btn_scanAndPredict = findViewById(R.id.btn_scanAndPredict);
-
         btn_scanAndPredict.setClickable(false);
         // 将按钮设置为不可用状态
         btn_scanAndPredict.setBackground(ContextCompat.getDrawable(mContext, R.drawable.scan_button_disabled));
         btn_scanAndPredict.setOnClickListener(Button_Scan_Click);
+
         // 将界面设置为不可用状态
         setActivityTouchDisable(true);
         row_data = new String[229];
         InitialNormalComponent();
         InitialFabricComposition();
         TitleBarEvent();
-        // 载入服务器API地址和key的自定义数据
-        loadServerData();
+
         //Bind to the service. This will start it, and call the start command function
         Intent gattServiceIntent = new Intent(this, ISCNIRScanSDK.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
@@ -597,10 +613,20 @@ public class ScanViewActivityForUsers extends Activity {
         LocalBroadcastManager.getInstance(mContext).registerReceiver(ReturnSetScanRepeatsReceiver, new IntentFilter(ISCNIRScanSDK.SET_SCANREPEATS_COMPLETE));
     }
 
-    private void loadServerData() {
+    private void loadData() {
         SharedPreferences sharedPreferences = getSharedPreferences("settingsViewStatus", Context.MODE_PRIVATE);
         API_URL = sharedPreferences.getString("API_URL", "http://192.168.115.230:8000/predict/");
         API_KEY = sharedPreferences.getString("API_KEY", "your-secret-api-key");
+        sharedPreferences = getSharedPreferences("scanViewUserStatus", Context.MODE_PRIVATE);
+        doubleSidedScanning = sharedPreferences.getBoolean("doubleSidedScanning", true);
+        doubleSidedContentVerification = sharedPreferences.getBoolean("doubleSidedContentVerification", false);
+    }
+    private void saveData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("scanViewUserStatus", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("doubleSidedScanning", doubleSidedScanning);
+        editor.putBoolean("doubleSidedContentVerification", doubleSidedContentVerification);
+        editor.apply();
     }
 
     /**
@@ -892,16 +918,31 @@ public class ScanViewActivityForUsers extends Activity {
     //region Initial Component and control
     // 初始化织物成分录入界面
     private void InitialFabricComposition() {
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, showResult);
+        // 初始化双面扫描按钮
+        btn_doubleside = findViewById(R.id.btn_doubleside);
+        btn_doubleside.setChecked(doubleSidedScanning);
+        btn_doubleside.setOnClickListener((e) -> {
+            // 更新双面扫描状态
+            doubleSidedScanning = btn_doubleside.isChecked();
+        });
+        // 初始化双面扫描结果验证
+        btn_verification = findViewById(R.id.btn_verification);
+        btn_verification.setChecked(doubleSidedContentVerification);
+        btn_verification.setOnClickListener((e) -> {
+            // 更新双面扫描结果验证状态
+            doubleSidedContentVerification = btn_verification.isChecked();
+        });
+
+        adapter = new ArrayAdapter<>(this, R.layout.result_list_item, showResult);
         fileNumber = findViewById(R.id.fileNumber);
         // 扫描结果ListView
         resultListView = findViewById(R.id.resultListView);
         progressBar = findViewById(R.id.progressBar);
-        scrollView = findViewById(R.id.scrollView);
+        constraintLayout = findViewById(R.id.cl_resultView);
         resultListView.setAdapter(adapter);
 
         progressBar.setVisibility(View.INVISIBLE);
-        resultListView.setVisibility(View.INVISIBLE);
+        resultListView.setVisibility(View.VISIBLE);
 
     }
 
@@ -969,6 +1010,7 @@ public class ScanViewActivityForUsers extends Activity {
         layout = findViewById(R.id.ll_double_side);
         DisableLinearComponet(layout);
 
+        ly_normal_config.setClickable(false);
         btn_scanAndPredict.setClickable(false);
         btn_scanAndPredict.setBackground(ContextCompat.getDrawable(mContext, R.drawable.scan_button_disabled));
 
@@ -999,6 +1041,7 @@ public class ScanViewActivityForUsers extends Activity {
 
 
         //------------------------------------------
+        ly_normal_config.setClickable(true);
         btn_scanAndPredict.setClickable(true);
         btn_scanAndPredict.setBackground(ContextCompat.getDrawable(mContext, R.drawable.scan_button));
 
@@ -1050,10 +1093,6 @@ public class ScanViewActivityForUsers extends Activity {
             closeFunction();
         }
         writeCSV(Scan_Spectrum_Data);
-        // 显示预测结果
-        resultListView.setVisibility(View.VISIBLE);
-        // 发送POST请求到API接口
-        postCsvData(post_data);
         //------------------------------------------------------------------------------------------------------------
         calProgress.setVisibility(View.GONE);
         progressBarinsideText.setVisibility(View.GONE);
@@ -1062,16 +1101,22 @@ public class ScanViewActivityForUsers extends Activity {
             IsScanPhase_1 = false;
             btn_scanAndPredict.setText("请扫描另一面");
             btn_scanAndPredict.setClickable(true);
+            btn_scanAndPredict.setBackground(ContextCompat.getDrawable(mContext, R.drawable.scan_button));
             setActivityTouchDisable(false);
             Toast.makeText(mContext, "请将样品翻面，再次扫描！", Toast.LENGTH_SHORT).show();
         } else {
+            // 显示预测结果
+            resultListView.setVisibility(View.VISIBLE);
+//            resultListView.setBackgroundColor(Color.TRANSPARENT);
+            // 发送POST请求到API接口
+            postCsvData(post_data);
             // 将当前的文件编号加1
             int fileNum = Integer.parseInt(fileNumber.getText().toString());
             fileNumber.setText(String.valueOf(fileNum + 1));
             // 设置为双面扫描的第一阶段
             IsScanPhase_1 = true;
             btn_scanAndPredict.setText(getString(R.string.scan_predict));
-            EnableAllComponent();
+//            EnableAllComponent();
         }
         //Tiva version <2.1.0.67
         if (!isExtendVer_PLUS && !isExtendVer && fw_level_standard.compareTo(ISCNIRScanSDK.FW_LEVEL_STANDARD.LEVEL_0) == 0)
@@ -1107,6 +1152,7 @@ public class ScanViewActivityForUsers extends Activity {
                         // 更新UI的代码，例如：
                         Dialog_Pane_Finish("网络异常", "请检查网络连接！\n详情：" + e.getMessage());
                         progressBar.setVisibility(View.INVISIBLE);
+                        EnableAllComponent();
                     }
                 });
             }
@@ -1118,8 +1164,9 @@ public class ScanViewActivityForUsers extends Activity {
                     if (response.code() == 200) {
                         System.out.println("请求成功！");
                         String result = response.body().string();
-                        System.out.println("response.body().string() = " + result);
-                        showResult.add("预测结果：" + result);
+//                        System.out.println("response.body().string() = " + result);
+                        parsingJSON(result);
+//                        showResult.add("预测结果：" + result);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -1127,6 +1174,7 @@ public class ScanViewActivityForUsers extends Activity {
                                 adapter.notifyDataSetChanged();
                                 progressBar.setVisibility(View.INVISIBLE);
                                 // 或其他UI更新操作
+                                EnableAllComponent();
                             }
                         });
                     }
@@ -1141,13 +1189,32 @@ public class ScanViewActivityForUsers extends Activity {
                             // 更新UI的代码，例如：
                             Dialog_Pane_Finish("请求失败", "请检查内容格式！\n详情：" + response.message());
                             progressBar.setVisibility(View.INVISIBLE);
+                            EnableAllComponent();
                         }
                     });
                 }
             }
         });
     }
-
+    private void parsingJSON(String jsonResponse){
+        try {
+            JSONArray jsonArray = new JSONArray(jsonResponse);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONArray innerArray = jsonArray.getJSONArray(i);
+                String fileName = innerArray.getString(0);
+                String result =  (i + 1) +"：" + fileName;
+                // 提取成分数据
+                for (int j = 1; j < innerArray.length(); j++) {
+                    String component = innerArray.getString(j);
+                    System.out.println("Component: " + component);
+                    result += "\n" + component;
+                }
+                showResult.add(result);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     private String ErrorByteTransfer() {
         String ErrorMsg = "";
         int ErrorInt = errbyte[0] & 0xFF | (errbyte[1] << 8);
@@ -2123,11 +2190,15 @@ public class ScanViewActivityForUsers extends Activity {
     @Override
     public void onResume() {
         super.onResume();
+        // 载入数据
+        loadData();
         GotoOtherPage = false;
         numSections = 0;
         // TODO: 2023/8/25 这里记得清空row_data和post_data
         row_data = new String[229];
-        post_data.clear();
+        if (IsScanPhase_1){
+            post_data.clear();
+        }
         // 更新当前文件名编号
         int fileNum = getMaxNumberFromFilenames();
         if (fileNum != -1) {
@@ -2233,6 +2304,8 @@ public class ScanViewActivityForUsers extends Activity {
     @Override
     public void onPause() {
         super.onPause();
+        // 保存双面扫描、双面扫描结果校验数据
+        saveData();
         // 取消注册广播接收器，避免重复写入文件
         if (!showActiveconfigpage) {
             LocalBroadcastManager.getInstance(mContext).unregisterReceiver(ScanConfSizeReceiver);

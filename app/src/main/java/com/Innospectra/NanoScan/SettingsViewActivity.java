@@ -15,15 +15,18 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ISCSDK.ISCNIRScanSDK;
 
@@ -53,6 +56,7 @@ public class SettingsViewActivity extends Activity {
     private static Context mContext;
     private Switch switchForAdministrator;
     private String API_URL, API_KEY;
+    private boolean isPasswordDialogShown = false;
 
 
 
@@ -62,7 +66,6 @@ public class SettingsViewActivity extends Activity {
         setContentView(R.layout.activity_settings);
         mContext = this;
         InitComponent();
-
         //Set up action bar up indicator
         ActionBar ab = getActionBar();
         if (ab != null) {
@@ -85,6 +88,50 @@ public class SettingsViewActivity extends Activity {
         btn_set_api_url.setOnClickListener(btn_set_api_url_OnClickListener);
         btn_set_api_key.setOnClickListener(btn_set_key_OnClickListener);
         switchForAdministrator = (Switch)findViewById(R.id.switchForAdministrator);
+        // 载入管理员状态
+        loadAdministratorStatus();
+
+        switchForAdministrator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // If the switch is being turned ON and password dialog hasn't been shown yet
+                if (isChecked && !isPasswordDialogShown) {
+                    showPasswordDialog();
+                }
+            }
+        });
+    }
+    private void showPasswordDialog() {
+        isPasswordDialogShown = true;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("管理员密码");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(input);
+
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (input.getText().toString().equals("admin")) {
+                    // Password is correct, do nothing
+                } else {
+                    switchForAdministrator.setChecked(false);  // Incorrect password, revert switch state
+                    Toast.makeText(SettingsViewActivity.this, "密码错误!", Toast.LENGTH_SHORT).show();
+                }
+                isPasswordDialogShown = false;
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switchForAdministrator.setChecked(false);  // Revert switch state on cancel
+                isPasswordDialogShown = false;
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
     private EditText.OnEditorActionListener Device_Filter_OnEditor = new EditText.OnEditorActionListener()
     {

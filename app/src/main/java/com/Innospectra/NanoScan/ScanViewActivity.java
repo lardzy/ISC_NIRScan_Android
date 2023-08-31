@@ -99,6 +99,18 @@ import static com.ISCSDK.ISCNIRScanSDK.storeBooleanPref;
 import static com.ISCSDK.ISCNIRScanSDK.storeStringPref;
 import static com.Innospectra.NanoScan.DeviceStatusViewActivity.GetLampTimeString;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 
 /**
  * Activity controlling the Nano once it is connected
@@ -346,6 +358,12 @@ public class ScanViewActivity extends Activity {
     private Boolean WarmUp = false;
     private Boolean doubleSidedScanning = false;
     private Boolean IsScanPhase_1 = true;
+    private TextView tv_reference_results;
+    private final List<String[]> post_data = new ArrayList<>();
+    private String[] row_data;
+    private static String API_URL = null;
+    private static String API_KEY = null;
+    private final OkHttpClient client = new OkHttpClient();
     //endregion
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -358,6 +376,7 @@ public class ScanViewActivity extends Activity {
         WarmUp = bundle.getBoolean("warmup");
         storeBooleanPref(mContext, ISCNIRScanSDK.SharedPreferencesKeys.LockButton,false);
         // Set up the action bar.
+        loadData();
         findViewById(R.id.layout_manual).setVisibility(View.GONE);
         findViewById(R.id.layout_quickset).setVisibility(View.GONE);
         findViewById(R.id.layout_maintain).setVisibility(View.GONE);
@@ -382,6 +401,7 @@ public class ScanViewActivity extends Activity {
         textileCompositions = new ArrayList<>();
         imageButtons = new ArrayList<>();
         editTexts = new ArrayList<>();
+        row_data = new String[229];
 
         InitialNormalComponent();
         InitialQuicksetComponent();
@@ -421,6 +441,11 @@ public class ScanViewActivity extends Activity {
         LocalBroadcastManager.getInstance(mContext).registerReceiver(GetPGAReceiver, new IntentFilter(ISCNIRScanSDK.SEND_PGA));
         //endregion
     }
+    private void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences("settingsViewStatus", Context.MODE_PRIVATE);
+        API_URL = sharedPreferences.getString("API_URL", "http://192.168.115.230:8000/predict/");
+        API_KEY = sharedPreferences.getString("API_KEY", "your-secret-api-key");
+        }
     private Button.OnClickListener Continuous_Scan_Stop_Click = new Button.OnClickListener()
     {
         @Override
@@ -1300,6 +1325,8 @@ public class ScanViewActivity extends Activity {
         textileComposition_3.setAdapter(adapter);
         textileComposition_4 = (Spinner) findViewById(R.id.textileComposition_4);
         textileComposition_4.setAdapter(adapter);
+        tv_reference_results = findViewById(R.id.tv_reference_results);
+        tv_reference_results.setText("参考结果：");
         imageButton = (ImageButton) findViewById(R.id.imageButton);
         imageButton_1 = (ImageButton) findViewById(R.id.imageButton_1);
         imageButton_2 = (ImageButton) findViewById(R.id.imageButton_2);
@@ -2475,7 +2502,9 @@ public class ScanViewActivity extends Activity {
         public void onClick(View view) {
             storeStringPref(mContext, ISCNIRScanSDK.SharedPreferencesKeys.prefix, filePrefix.getText().toString());
             long delaytime = 300;
-
+            row_data = new String[229];
+            post_data.clear();
+            tv_reference_results.setText("预测中...");
             // 检查成分是否为空或者内容不规范
             if (!checkEditTextContent(textileComposition, editTextNumber)){
                 Dialog_Pane("错误", "请至少填写一个成分和含量，并首先填写在第一行！");
@@ -2499,14 +2528,18 @@ public class ScanViewActivity extends Activity {
             }
 
             // 检查含量总数是否为100
-            if (EditTextToNum(editTextNumber) +
+            double epsilon = 0.0001;
+            double total = EditTextToNum(editTextNumber) +
                     EditTextToNum(editTextNumber_1) +
                     EditTextToNum(editTextNumber_2) +
                     EditTextToNum(editTextNumber_3) +
-                    EditTextToNum(editTextNumber_4) != 100) {
+                    EditTextToNum(editTextNumber_4);
+
+            if (Math.abs(total - 100.0) > epsilon) {
                 Dialog_Pane("错误", "化学值总数必须为100！");
                 return;
             }
+
             // 检查文件编号是否为空
             if (fileNumber.getText().toString().isEmpty()) {
                 Dialog_Pane("错误", "请填写文件编号！");
@@ -2611,9 +2644,13 @@ public class ScanViewActivity extends Activity {
         if (editText.getText().toString().isEmpty()) {
             return 0;
         } else {
-            return Double.parseDouble(editText.getText().toString());
+            double value = Double.parseDouble(editText.getText().toString());
+            return value;
         }
     }
+//    private double roundToOneDecimal(double value) {
+//        return Math.round(value * 10.0) / 10.0;
+//    }
     /**
      * Send broadcast  START_SCAN will  through ScanStartedReceiver  to notify scanning(PerformScan should be called)
      */
@@ -2838,6 +2875,8 @@ public class ScanViewActivity extends Activity {
         //------------------------------------------------------------------------------------------------------------
         calProgress.setVisibility(View.GONE);
         progressBarinsideText.setVisibility(View.GONE);
+        // 发送POST请求到API接口
+        postCsvData(post_data);
         // 当启用了双面扫描，且当前为第一阶段时
         if (doubleSidedScanning && IsScanPhase_1){
             IsScanPhase_1 = false;
@@ -2919,6 +2958,91 @@ public class ScanViewActivity extends Activity {
                 }}, delaytime);
 
         }
+    }
+    public void postCsvData(List<String[]> post_data) {
+        StringBuilder csvBuilder = new StringBuilder();
+
+        for (String[] row : post_data) {
+            csvBuilder.append(String.join(",", row)).append("\n");
+        }
+
+        String csvContent = csvBuilder.toString();
+
+        // Construct the complete URL with query parameters
+        String completeUrl = API_URL + "?gpu_count=1&api_key=" + API_KEY;
+
+        // Fix: Create a multipart request body
+        RequestBody fileBody = RequestBody.create(MediaType.parse("text/csv"), csvContent);
+        MultipartBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("file", "data.csv", fileBody).build();
+
+        Request request = new Request.Builder().url(completeUrl).post(requestBody).build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println("网络异常：" + e.getMessage());
+                // 更新警告文本
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 更新UI的代码，例如：
+                      tv_reference_results.setText("网络异常：" + e.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    // Handle successful response
+                    if (response.code() == 200) {
+                        System.out.println("请求成功！");
+                        String result = response.body().string();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // 更新UI的代码，例如：
+                                tv_reference_results.setText("预测结果：" + parsingJSON(result));
+                            }
+                        });
+                    }
+                    // Do something with the result
+                } else {
+                    // Handle error response
+                    System.out.println("请求失败:" + response.message());
+                    // 弹出警告窗口
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // 更新UI的代码，例如：
+                            tv_reference_results.setText("请求失败:" + response.message());
+                        }
+                    });
+                }
+            }
+        });
+    }
+    private String parsingJSON(String jsonResponse){
+        try {
+            JSONArray jsonArray = new JSONArray(jsonResponse);
+            String result = "";
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONArray innerArray = jsonArray.getJSONArray(i);
+                String fileName = innerArray.getString(0);
+                result += (i + 1) +"：" + fileName;
+                // 提取成分数据
+                for (int j = 1; j < innerArray.length(); j++) {
+                    String component = innerArray.getString(j);
+                    System.out.println("Component: " + component);
+                    result += "\n" + component;
+                }
+                result += "\n" + "------------------------\n";
+            }
+            return result;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
     private String ErrorByteTransfer()
     {
@@ -3346,7 +3470,8 @@ public class ScanViewActivity extends Activity {
         String compositionNameAndNumber = getCompositionAndNumberString();
         // 将文件序号加入文件名中
         String fileNum = fileNumber.getText().toString();
-
+        // 将样品编号加入文件命名中
+        String sampleNum = et_simple_number.getText().toString();
         String csvOS= "";
         CSV[26][9] = "Error Details:,";
 
@@ -3354,13 +3479,19 @@ public class ScanViewActivity extends Activity {
         if(HaveError)
         {
             CSV[26][10] = ErrorByteTransfer();
-            csvOS = mSDFile.getParent() + "/" + mSDFile.getName() + "/ISC_Report/" + prefix + "_" + configname + "_" + compositionNameAndNumber + "_" + CurrentTime + "_Error_Detected_" + fileNum + ".csv";
+            csvOS = mSDFile.getParent() + "/" + mSDFile.getName() + "/ISC_Report/" + prefix +
+                    "_" + configname + "_" + compositionNameAndNumber + "_" + sampleNum + "_" +
+                    CurrentTime + "_Error_Detected_" + fileNum + ".csv";
         }
         else
         {
             CSV[26][10] = "Not Found,";
-            csvOS = mSDFile.getParent() + "/" + mSDFile.getName() + "/ISC_Report/" + prefix+"_" + configname + "_" + compositionNameAndNumber + "_" + CurrentTime + "_" + fileNum + ".csv";
+            csvOS = mSDFile.getParent() + "/" + mSDFile.getName() + "/ISC_Report/" + prefix +
+                    "_" + configname + "_" + compositionNameAndNumber + "_"+ sampleNum + "_" +
+                    CurrentTime + "_" + fileNum + ".csv";
         }
+        // 将文件名加入单行数据中
+        row_data[0] = "\"" + prefix + "_" + configname + "_" + CurrentTime + "_" + fileNum + ".csv" + "\"";
 
         try {
             List<String[]> data = new ArrayList<String[]>();
@@ -3386,11 +3517,14 @@ public class ScanViewActivity extends Activity {
                 int intens = scanResults.getUncalibratedIntensity()[csvIndex];
                 float absorb = (-1) * (float) Math.log10((double) scanResults.getUncalibratedIntensity()[csvIndex] / (double) scanResults.getIntensity()[csvIndex]);
                 //float reflect = (float) Scan_Spectrum_Data.getUncalibratedIntensity()[csvIndex] / Scan_Spectrum_Data.getIntensity()[csvIndex];
+                row_data[csvIndex + 1] = String.valueOf(absorb);
                 float reference = (float) Scan_Spectrum_Data.getIntensity()[csvIndex];
                 data.add(new String[]{String.valueOf(waves), String.valueOf(absorb),String.valueOf(reference), String.valueOf(intens)});
             }
             // 结尾添加属性信息
             data.add(new String[]{"***End of Scan Data***"});
+            // 添加row数据到post_data
+            post_data.add(row_data);
             for (int i = 0; i < textileCompositions.size() && i < editTexts.size(); i++){
                 if (!editTexts.get(i).getText().toString().equals("")){
                     data.add(new String[]{textileCompositions.get(i).getSelectedItem().toString(), editTexts.get(i).getText().toString()});
@@ -3429,9 +3563,12 @@ public class ScanViewActivity extends Activity {
             String compositionNameAndNumber = getCompositionAndNumberString();
             // 将文件序号加入文件名中
             String fileNum = fileNumber.getText().toString();
+            // 将样品编号加入文件命名中
+            String sampleNum = et_simple_number.getText().toString();
 
             ContentValues values = new ContentValues();
-            values.put(MediaStore.MediaColumns.DISPLAY_NAME, prefix+"_" + configname + "_" + compositionNameAndNumber + "_" + CurrentTime + "_" + fileNum + ".csv");       //file name
+            values.put(MediaStore.MediaColumns.DISPLAY_NAME, prefix+"_" + configname + "_" +
+                    compositionNameAndNumber +  "_" + sampleNum + "_" + CurrentTime + "_" + fileNum + ".csv");       //file name
             values.put(MediaStore.MediaColumns.MIME_TYPE, "text/comma-separated-values");
             values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS + "/ISC_Report/");
             Uri uri = getContentResolver().insert(MediaStore.Files.getContentUri("external"), values);
@@ -4642,9 +4779,11 @@ public class ScanViewActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
+        loadData();
         GotoOtherPage = false;
         numSections=0;
-
+        row_data = new String[229];
+        post_data.clear();
          // 更新当前文件名编号
         int fileNum = getMaxNumberFromFilenames();
 //        System.out.println("当前文件名编号" + fileNum);
