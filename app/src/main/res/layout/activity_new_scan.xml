@@ -14,6 +14,12 @@
         android:layout_marginEnd="@dimen/dip8"
         android:layout_weight="1">
 
+        <TextView
+            android:id="@+id/tv_reference_results"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
@@ -376,7 +382,7 @@
     <RelativeLayout
         android:id="@+id/rl_graph_list"
         android:layout_width="match_parent"
-        android:layout_height="448dp"
+        android:layout_height="300dp"
         android:layout_weight="1"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/dip8"

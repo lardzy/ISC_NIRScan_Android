@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.Innospectra.NanoScan" >
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="s" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/icon_isc_logo"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"
+        tools:replace="allowBackup"
+        android:requestLegacyExternalStorage="true"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".HomeViewActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".InformationViewActivity"
+            android:label="@string/title_activity_info"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".SettingsViewActivity"
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ScanViewActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ConfigureViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DeviceInfoViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DeviceStatusViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ScanConfigurationsViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SelectDeviceViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AddScanConfigViewActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ActiveConfigDetailViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LicenseViewActivity"
+            android:label="@string/license"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ActivationViewActivity"
+            android:label="@string/activation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AdvanceDeviceStatusViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ErrorStatusViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AdvanceErrorStatusViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".fabricManagementActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ScanViewActivityForUsers"
+            android:screenOrientation="portrait" />
+
+    </application>
+
+</manifest>
