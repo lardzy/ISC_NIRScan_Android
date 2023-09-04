@@ -85,7 +85,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import static com.ISCSDK.ISCNIRScanSDK.Interpret_intensity;
@@ -142,6 +145,7 @@ public class ScanViewActivity extends Activity {
     private AlertDialog alertDialog;
     private Menu mMenu;
     private ArrayList<Spinner> textileCompositions;
+    private Map<String, Integer> textileCompositionsMap = new HashMap<>();
     private Spinner textileComposition, textileComposition_1, textileComposition_2, textileComposition_3, textileComposition_4;
     private ArrayList<ImageButton> imageButtons;
     private ImageButton imageButton, imageButton_1, imageButton_2, imageButton_3, imageButton_4;
@@ -2025,23 +2029,77 @@ public class ScanViewActivity extends Activity {
                                     fabricComponents.add(new FabricComponent(checkResult));
                                 }
                             }
+                            // 在主线程中更新UI
+                            runOnUiThread(() -> applyFabricComponents());
                         } else {
-                            String message = jsonResponse.getString("message");
                             // TODO: 处理错误信息
+                            String message = jsonResponse.getString("message");
+                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                         }
+                    }else {
+                        Toast.makeText(mContext, "网络错误：" + response, Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        query_fabric_components.setEnabled(true);
-                    }
-                });
+                runOnUiThread(() -> query_fabric_components.setEnabled(true));
                 isPostSampleDataRunning = false;
             }
         }).start();
+    }
+    // 显示纤维成分列表
+    private void applyFabricComponents(){
+        if (fabricComponents.size() == 1){
+            Iterator<Map.Entry<String, Double>> iterator = fabricComponents.get(0).getFiberComposition().entrySet().iterator();
+            for (int i = 0; i < editTexts.size() && iterator.hasNext(); i++) {
+                Map.Entry<String, Double> entry = iterator.next();
+                editTexts.get(i).setText(entry.getValue().toString());
+                //TODO: 将纤维名称归类到下拉框已有纤维种类中
+//                textileCompositions.get(i).setText(ClassificationOfFiberComponents(entry.getKey()));
+
+            }
+        } else if (fabricComponents.size() > 1) {
+            //TODO: 处理多个纤维成分的情况
+        }else {
+            Toast.makeText(mContext, "未查询到纤维成分", Toast.LENGTH_SHORT).show();
+            return;
+        }
+    }
+    private String ClassificationOfFiberComponents(String fiberName){
+        if (fiberName.equals("棉")){
+            return "棉";
+        } else if (fiberName.equals("涤纶") || fiberName.equals("聚酯纤维")){
+            return "聚酯纤维";
+        } else if (fiberName.equals("氨纶")){
+            return "氨纶";
+        } else if (fiberName.equals("锦纶")){
+            return "锦纶";
+        } else if (fiberName.equals("桑蚕丝")){
+            return "桑蚕丝";
+        } else if (fiberName.equals("乙纶")){
+            return "乙纶";
+        } else if (fiberName.equals("动物毛纤维") || fiberName.equals("绵羊毛") || fiberName.equals("山羊绒")
+                || fiberName.equals("牦牛绒") || fiberName.equals("兔毛") || fiberName.equals("马海毛") ||
+                fiberName.equals("骆驼毛") || fiberName.equals("骆驼绒")) {
+            return "动物毛纤维";
+        } else if (fiberName.equals("再生纤维素纤维") ||fiberName.equals("莫代尔") || fiberName.equals("粘纤")
+                || fiberName.equals("莱赛尔")) {
+            return "再生纤维素纤维";
+        } else if (fiberName.equals("铜氨纤维")){
+            return "铜氨纤维";
+        } else if (fiberName.equals("醋纤")){
+            return "醋纤";
+        } else if (fiberName.equals("丙纶")){
+            return "丙纶";
+        } else if (fiberName.equals("海藻纤维")){
+            return "海藻纤维";
+        } else if (fiberName.equals("聚酰亚胺纤维")){
+            return "聚酰亚胺纤维";
+        } else if (fiberName.equals("壳聚糖纤维")){
+            return "壳聚糖纤维";
+        }else {
+            return "其他纤维";
+        }
     }
     // 监听EditText的文本变化，显示或隐藏清除按钮
     private TextWatcher et_simple_number_OnTextChange = new TextWatcher() {
