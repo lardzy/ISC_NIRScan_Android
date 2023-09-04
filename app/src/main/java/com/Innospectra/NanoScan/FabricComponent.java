@@ -6,7 +6,9 @@ import java.util.regex.Pattern;
 
 public class FabricComponent {
     private LinkedHashMap<String, Double> fiberComposition = new LinkedHashMap<>();
+    private String checkResult;
     public FabricComponent(String checkResult) {
+        this.checkResult = checkResult;
         try {
             Pattern pattern = Pattern.compile("([\\u4e00-\\u9fa5]+)\\s+([0-9.]+)");
             Matcher matcher = pattern.matcher(checkResult);
@@ -23,5 +25,9 @@ public class FabricComponent {
 
     public LinkedHashMap<String, Double> getFiberComposition() {
         return fiberComposition;
+    }
+
+    public String getCheckResult() {
+        return checkResult;
     }
 }
