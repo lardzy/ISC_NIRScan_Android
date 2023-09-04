@@ -48,6 +48,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -101,6 +102,7 @@ import static com.Innospectra.NanoScan.DeviceStatusViewActivity.GetLampTimeStrin
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -320,6 +322,7 @@ public class ScanViewActivity extends Activity {
     private EditText et_quickset_continuous_scan_repeat;
     private Button btn_quickset_continuous_scan_stop;
     private Button btn_quickset_set_config;
+    private Button query_fabric_components;
 
     int quickset_scan_method_index =0;
     int quickset_exposure_time_index =0;
@@ -364,6 +367,10 @@ public class ScanViewActivity extends Activity {
     private static String API_URL = null;
     private static String API_KEY = null;
     private final OkHttpClient client = new OkHttpClient();
+    private Boolean isPostSampleDataRunning = false;
+    private ArrayList<FabricComponent> fabricComponents = new ArrayList<>();
+
+
     //endregion
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1332,6 +1339,12 @@ public class ScanViewActivity extends Activity {
         imageButton_2 = (ImageButton) findViewById(R.id.imageButton_2);
         imageButton_3 = (ImageButton) findViewById(R.id.imageButton_3);
         imageButton_4 = (ImageButton) findViewById(R.id.imageButton_4);
+        query_fabric_components = (Button) findViewById(R.id.query_fabric_components);
+        query_fabric_components.setOnClickListener(v -> {
+            // 这里放置查询纤维成分的代码
+            getFabricComponents(et_simple_number);
+            query_fabric_components.setEnabled(false);
+        });
         fileNumber = (EditText) findViewById(R.id.fileNumber);
 
         editTextNumber = (EditText) findViewById(R.id.editTextNumber);
@@ -1553,6 +1566,7 @@ public class ScanViewActivity extends Activity {
 
         et_simple_number.setOnTouchListener(et_simple_number_OnTouch);
         et_simple_number.addTextChangedListener(et_simple_number_OnTextChange);
+        et_simple_number.setOnEditorActionListener(et_simple_number_OnEdit);
         ly_normal_config.setClickable(false);
         ly_normal_config.setOnClickListener(Normal_Config_Click);
         toggle_btn_continuous_scan.setChecked(getBooleanPref(mContext, ISCNIRScanSDK.SharedPreferencesKeys.continuousScan, false));
@@ -1945,6 +1959,90 @@ public class ScanViewActivity extends Activity {
             return false;
         }
     };
+    private TextView.OnEditorActionListener et_simple_number_OnEdit = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                // 回车键触发后隐藏键盘并查询纤维成分
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(et_simple_number.getWindowToken(), 0);
+                if (!isPostSampleDataRunning)
+                    getFabricComponents(et_simple_number);
+                return true;
+            }
+            return false;
+        }
+    };
+    private void getFabricComponents(EditText sampleNumber){
+        // 清空纤维成分列表
+        fabricComponents.clear();
+        // 获取样品编号
+        String s = sampleNumber.getText().toString();
+        if (s.isEmpty()) {
+            Toast.makeText(mContext, "请输入样品编号", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // 检查样品编号是否合理
+        if (!s.matches("^\\d{2}.\\d{6}.*")){
+            Toast.makeText(mContext, "请输入正确的样品编号", Toast.LENGTH_SHORT).show();
+            sampleNumber.setError("请填写正确的样品编号！");
+        }else {
+            s = s.substring(0, 9);
+            // 只保留样品编号的前9位
+            et_simple_number.setText(s);
+            postSampleData(s);
+        }
+    }
+    private void postSampleData(String number){
+        String reportNo = number;
+        isPostSampleDataRunning = true;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String url = "http://192.168.106.110/OtherDeal/FibreQuery" +
+                            "?AnthoirCode=D90D6D76D5154C6CA01F8E8C4B5ADB01" +
+                            "&ReportNo=" + reportNo;
+
+                    Request request = new Request.Builder()
+                            .url(url)
+                            .post(RequestBody.create(null, new byte[0]))
+                            .build();
+
+//                    System.out.println(request);
+
+                    Response response = client.newCall(request).execute();
+                    if (response.isSuccessful()) {
+                        JSONObject jsonResponse = new JSONObject(response.body().string());
+                        int code = jsonResponse.getInt("code");
+                        if (code == 0) {
+                            JSONArray data = jsonResponse.getJSONArray("data");
+                            for (int i = 0; i < data.length(); i++) {
+                                JSONObject item = data.getJSONObject(i);
+                                String checkItemName = item.getString("CheckItemName");
+                                String checkResult = item.getString("CheckResult");
+                                if (checkItemName.equals("纤维含量")){
+                                    fabricComponents.add(new FabricComponent(checkResult));
+                                }
+                            }
+                        } else {
+                            String message = jsonResponse.getString("message");
+                            // TODO: 处理错误信息
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        query_fabric_components.setEnabled(true);
+                    }
+                });
+                isPostSampleDataRunning = false;
+            }
+        }).start();
+    }
     // 监听EditText的文本变化，显示或隐藏清除按钮
     private TextWatcher et_simple_number_OnTextChange = new TextWatcher() {
         @Override

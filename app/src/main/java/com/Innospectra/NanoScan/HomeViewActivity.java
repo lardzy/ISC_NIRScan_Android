@@ -258,7 +258,6 @@ public class HomeViewActivity extends Activity {
             CheckPermission();
         }
     };
-
     private Button.OnClickListener main_info_listenser = new Button.OnClickListener()
     {
 

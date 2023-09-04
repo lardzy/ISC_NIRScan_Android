@@ -421,8 +421,16 @@
                         android:layout_weight="0.1"
                         android:drawableRight="@drawable/ic_menu_close_clear_cancel"
                         android:ems="9"
+                        android:imeOptions="actionDone"
                         android:inputType="text"
                         android:singleLine="true" />
+
+                    <Button
+                        android:id="@+id/query_fabric_components"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.2"
+                        android:text="@string/query_fabricComponents" />
 
                 </LinearLayout>
 
