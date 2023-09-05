@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.Innospectra.ISCScanNano"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 33
         versionCode  16
         versionName "2.20"
@@ -66,4 +66,7 @@ dependencies {
     compile 'com.opencsv:opencsv:3.6'
     compile project(':MPChartLib')
     implementation(name:'ISCSDK-release', ext:'aar')
+    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
+    implementation 'com.google.zxing:core:3.3.0'
+
 }
