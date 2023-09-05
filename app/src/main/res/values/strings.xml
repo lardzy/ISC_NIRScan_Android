@@ -1,0 +1,460 @@
+<resources>
+    <string name="app_name">GTTC NIRScan 近红外光谱扫描</string>
+
+    <string name="action_info">Info</string>
+    <string name="action_settings">设置</string>
+    <string name="action_scan">Scan</string>
+    <string name="action_add">Add</string>
+    <string name="action_save">保存</string>
+
+    <string name="search_hint">Search</string>
+    <string name="title_activity_info">关于我们</string>
+
+    <string name="title_activity_settings">设置</string>
+
+    <string-array name="info_title_array">
+        <item>广检集团官方网站</item>
+        <item>联系我们</item>
+    </string-array>
+
+    <string-array name="info_body_array">
+        <item>广检集团是广州市主营业务为检验检测认证的市管国有企业，由市国资委履行出资人职责，委托市市场监管局监管，于2016年9月20日挂牌成立!</item>
+        <item>总部地址：国家检验检测高技术服务业集聚区番禺园区（广州市番禺区石楼珠江路1号）</item>
+    </string-array>
+
+    <string-array name="info_url_array">
+        <item>http://www.ti.com/tool/dlpnirnanoevm</item>
+        <item>http://e2e.ti.com/support/dlp__mems_micro-electro-mechanical_systems/f/983</item>
+    </string-array>
+
+    <string name="temperature">温度</string>
+    <string name="lamptime">光源使用总时长</string>
+    <string name="spatial_freq">Spatial Freq</string>
+    <string name="set_nano">设置我的设备</string>
+    <string name="clear_nano">清空我的设备</string>
+    <string name="go">Go!</string>
+    <string name="forget">清空</string>
+    <string name="device_filter">设备名称筛选</string>
+    <string name="fiber_management">管理成分种类</string>
+    <string name="administratorMode">启用管理员模式</string>
+    <string name="api_url">设置API接口地址</string>
+    <string name="api_key">设置API密钥</string>
+
+
+
+    <string name="title_activity_graph">Graph</string>
+
+    <string name="reflectance">反射率</string>
+    <string name="intensity">原始数据</string>
+    <string name="absorbance">吸光度</string>
+    <string name="reference_tab">参比</string>
+
+    <string-array name="graph_tab_index">
+        <item>反射率</item>
+        <item>吸光度</item>
+        <item>原始数据</item>
+        <item>参比</item>
+    </string-array>
+
+    <string name="aspirin">aspirin</string>
+    <string name="bc">bc</string>
+    <string name="bellpepper">bellpepper</string>
+    <string name="coconutoil">coconutoil</string>
+    <string name="coffee">coffee</string>
+    <string name="corn_starch">corn_starch</string>
+    <string name="eucerin_lotion">eucerin_lotion</string>
+    <string name="flour">flour</string>
+    <string name="glucose">glucose</string>
+    <string name="out_of_spec_aspirin">out_of_spec_aspirin</string>
+
+    <string name="delete">Delete</string>
+    <string name="ok">好的</string>
+    <string name="not_connected_title">未连接</string>
+    <string name="not_connected_message">确保安卓设备和近红外光谱仪上的蓝牙已启动，然后点击主视图上的扫描按钮。</string>
+    <string name="yes_i_know">Yes, I known</string>
+
+    <string name="battery">电池</string>
+    <string name="humidity">湿度</string>
+    <string name="device_status">设备状态</string>
+    <string name="error_status">Error Status</string>
+    <string name="temp_threshold">Temperature Threshold</string>
+    <string name="deg_c">deg C</string>
+    <string name="deg_f">deg F</string>
+    <string name="humid_threshold">Humidity Threshold</string>
+    <string name="relative_humid">% RH</string>
+    <string name="not_supported">Not Supported</string>
+    <string name="click">Click</string>
+    <string name="clear_error">Clear Error</string>
+    <string name="detail_device_status">Detailed Device Status</string>
+    <string name="detail_error_status">Detailed Error Status</string>
+    <string name="detail_scan_error_status">Detailed Scan Error Status</string>
+    <string name="detail_adc_error_status">Detailed ADC Error Status</string>
+    <string name="detail_hw_error_status">Detailed Hardware Error Status</string>
+    <string name="detail_tmp006_error_status">Detailed TMP006 Error Status</string>
+    <string name="detail_hdc1000_error_status">Detailed HDC1000 Error Status</string>
+    <string name="detail_battery_error_status">Detailed Battery Error Status</string>
+    <string name="detail_system_error_status">Detailed System Error Status</string>
+
+    <string name="version">v%1$s (%2$d)</string>
+
+    <string-array name="configure_options">
+        <item>Device Information</item>
+        <item>Device Status</item>
+        <item>Scan Configurations</item>
+    </string-array>
+
+    <string name="range_start_value">%1$d nm</string>
+    <string name="range_end_value">%1$d nm</string>
+    <string name="width_value">%1$d nm</string>
+    <string name="patterns_value">%1$d</string>
+    <string name="repeats_value">%1$d</string>
+
+    <string name="manufacturer">Manufacturer</string>
+    <string name="scan_Type">Scan Type</string>
+    <string name="range_start">Spectral Range Start</string>
+    <string name="range_end">Spectral Range End</string>
+    <string name="width">Width</string>
+    <string name="number_patterns">Number of Patterns</string>
+    <string name="number_repeats">Number of Repeats</string>
+    <string name="serial_sn">Nano SN</string>
+
+    <string name="scan">开始扫描</string>
+    <string name="scan_predict">扫描并预测</string>
+    <string name="prefix">文件名前缀</string>
+    <string name="file_number">文件名编号</string>
+    <string name="simple_number">单号</string>
+    <string name="data">Data</string>
+    <string name="nano">Nano</string>
+    <string name="save_to_sd">Save to SD Card?</string>
+    <string name="save_to_android">Save to Android Device?</string>
+    <string name="cont_scan">连续测量?</string>
+    <string name="scan_conf">扫描配置</string>
+    <string name="col_1">Column 1</string>
+    <string name="hadamard">Hadamard</string>
+    <string name="cont_scan_stop">停止连续扫描</string>
+    <string name="double_side_scan">启用双面扫描？</string>
+    <string name="user_name">检验员</string>
+    <string name="verification_data">校验双面差异？</string>
+
+
+    <string name="model">Model Number</string>
+    <string name="serial">Serial Number</string>
+    <string name="hw_rev">Hardware Rev</string>
+    <string name="tiva_rev">Tiva Rev</string>
+    <string name="spectrum_rev">Spectrum Rev</string>
+
+    <string name="batt_level_value">%1$d%%</string>
+    <string name="temp_value_c">%1$s&#x2103;</string>
+    <string name="temp_value_f">%1$s&#x2109;</string>
+    <string name="humid_value">%1$s%% RH</string>
+
+    <string name="stored_configurations">Stored Configurations</string>
+    <string name="reading_configurations">读取扫描配置信息…</string>
+    <string name="stored_scan_data">Stored Scan Data</string>
+    <string name="reading_sd_card">Reading SD Card…</string>
+    <string name="adding_configurations">Adding Configurations</string>
+    <string name="scan_configurations">Scan Configurations</string>
+
+    <string name="time_format_at">\'at\'</string>
+    <string name="new_scan">新的扫描</string>
+    <string name="newScan">NewScan</string>
+    <string name="nano_disconnected">"设备已断开连接!"</string>
+    <string name="configure">设置</string>
+    <string name="device_information">设备信息</string>
+    <string name="file_not_found">Could not find the file!</string>
+
+    <string name="emailing">"Emailing "</string>
+    <string name="send_mail">"Send mail…"</string>
+    <string name="no_email_clients">There are no email clients installed.</string>
+    <string name="update_thresholds">Update Thresholds</string>
+    <string name="scanning">扫描中…</string>
+
+    <string name="dl_ref_cal">正在下载参考校准数据…</string>
+    <string name="dl_cal_matrix">正在下载校准矩阵…</string>
+    <string name="select_nano">选择设备</string>
+    <string name="nano_confirmation_title">请确认</string>
+    <string name="nano_confirmation_msg">您确定要将MAC地址为: %1$s, 的光谱仪设置为主设备吗？</string>
+    <string name="nano_forget_msg">您确定要将MAC地址为: %1$s, 的光谱仪删除吗？</string>
+    <string name="cancel">取消</string>
+    <string name="no_sd_scans">No Stored Scans on SD Card!</string>
+
+    <string name="desc_icon">App icon</string>
+    <string name="desc_splash">TI, DLP, and ISC logo</string>
+    <string name="desc_info">Info icon</string>
+
+    <string name="lamp_time">光源稳定时间Lamp-Stable Time(ms)</string>
+    <string name="scan_mode">手动扫描模式</string>
+    <string name="lamp">打开光源Turn-On Lamp</string>
+    <string name="pga">设置扫描增益Set Scan PGA</string>
+    <string name="repeat">连续扫描次数</string>
+    <string name="scan_method">扫描方法</string>
+    <string name="spec_start">起始波长 (nm)</string>
+    <string name="spec_end">结束波长 (nm)</string>
+    <string name="scan_width">扫描宽度Scan Width (nm)</string>
+    <string name="res">分辨率D-Res.</string>
+    <string name="aver_scan">平均扫描次数 (times)</string>
+    <string name="ex_time">曝光时间 (ms)</string>
+    <string name="continuous_scan_mode">Continuous Scan Mode</string>
+    <string name="scan_interval_time">连续测量时间间隔 (sec)</string>
+    <string name="set_value">设置所有配置</string>
+    <string name="section">Section</string>
+    <string name="config_index">Config Index</string>
+    <string name="serial_num">Config SerialNumber</string>
+    <string name="name">Config Name</string>
+    <string name="scan_repeat">扫描重复次数</string>
+    <string name="total_sections">Total Scan Sections</string>
+    <string name="type">Type(0:Column,1:Hadamard)</string>
+    <string name="section_exposure">Exposure(0-6): 0.635ms</string>
+    <string name="scan_width_add">Width(2-52): 7.02nm</string>
+    <string name="reference">替换出厂参比</string>
+    <string name="license">License</string>
+    <string name="lock_btn">锁定机身按钮</string>
+    <string name="switch_twoSided">启动两面测试</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="activation">激活</string>
+    <string name="add_fabricComponents">添加成分</string>
+    <string name="query_fabricComponents">查询</string>
+    <string name="scan_barcode">扫描</string>
+
+
+    <string-array name="scan_method_array">
+        <item>Column</item>
+        <item>Hadamard</item>
+    </string-array>
+
+    <string-array name="exposure_time">
+        <item>0.635</item>
+        <item>1.27</item>
+        <item>2.54</item>
+        <item>5.08</item>
+        <item>15.24</item>
+        <item>30.48</item>
+        <item>60.96</item>
+    </string-array>
+
+    <string-array name="scan_width">
+        <item>2.34</item>
+        <item>3.51</item>
+        <item>4.68</item>
+        <item>5.85</item>
+        <item>7.02</item>
+        <item>8.19</item>
+        <item>9.36</item>
+        <item>10.53</item>
+        <item>11.70</item>
+        <item>12.87</item>
+        <item>14.04</item>
+        <item>15.21</item>
+        <item>16.38</item>
+        <item>17.55</item>
+        <item>18.72</item>
+        <item>19.89</item>
+        <item>21.06</item>
+        <item>22.23</item>
+        <item>23.40</item>
+        <item>24.57</item>
+        <item>25.74</item>
+        <item>26.91</item>
+        <item>28.08</item>
+        <item>29.25</item>
+        <item>30.42</item>
+        <item>31.59</item>
+        <item>32.76</item>
+        <item>33.93</item>
+        <item>35.10</item>
+        <item>36.27</item>
+        <item>37.44</item>
+        <item>38.61</item>
+        <item>39.78</item>
+        <item>40.95</item>
+        <item>42.12</item>
+        <item>43.29</item>
+        <item>44.46</item>
+        <item>45.63</item>
+        <item>46.80</item>
+        <item>47.97</item>
+        <item>49.14</item>
+        <item>50.31</item>
+        <item>51.48</item>
+        <item>52.65</item>
+        <item>53.82</item>
+        <item>54.99</item>
+        <item>56.16</item>
+        <item>57.33</item>
+        <item>58.50</item>
+        <item>59.67</item>
+        <item>60.84</item>
+    </string-array>
+    <string-array name="scan_width_plus">
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
+        <item>33</item>
+        <item>34</item>
+        <item>35</item>
+        <item>36</item>
+        <item>37</item>
+        <item>38</item>
+        <item>39</item>
+        <item>40</item>
+        <item>41</item>
+        <item>42</item>
+        <item>43</item>
+        <item>44</item>
+        <item>45</item>
+        <item>46</item>
+        <item>47</item>
+        <item>48</item>
+        <item>49</item>
+        <item>50</item>
+        <item>51</item>
+        <item>52</item>
+        <item>53</item>
+        <item>54</item>
+        <item>55</item>
+        <item>56</item>
+        <item>57</item>
+        <item>58</item>
+        <item>59</item>
+        <item>60</item>
+        <item>61</item>
+    </string-array>
+    <string-array name="detail_device_status">
+        <item>Tiva</item>
+        <item>Scanning</item>
+        <item>BLE stack</item>
+        <item>BLE connection</item>
+        <item>Scan Data Interpreting</item>
+        <item>Scan Button Pressed</item>
+        <item>Battery in charge</item>
+    </string-array>
+    <string name="title_activity_device_management_view">DeviceManagementViewActivity</string>
+    <string name="large_text">
+        "Material is the metaphor.\n\n"
+
+        "A material metaphor is the unifying theory of a rationalized space and a system of motion."
+        "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
+        "technologically advanced and open to imagination and magic.\n"
+        "Surfaces and edges of the material provide visual cues that are grounded in reality. The "
+        "use of familiar tactile attributes helps users quickly understand affordances. Yet the "
+        "flexibility of the material creates new affordances that supercede those in the physical "
+        "world, without breaking the rules of physics.\n"
+        "The fundamentals of light, surface, and movement are key to conveying how objects move, "
+        "interact, and exist in space and in relation to each other. Realistic lighting shows "
+        "seams, divides space, and indicates moving parts.\n\n"
+
+        "Bold, graphic, intentional.\n\n"
+
+        "The foundational elements of print based design typography, grids, space, scale, color, "
+        "and use of imagery guide visual treatments. These elements do far more than please the "
+        "eye. They create hierarchy, meaning, and focus. Deliberate color choices, edge to edge "
+        "imagery, large scale typography, and intentional white space create a bold and graphic "
+        "interface that immerse the user in the experience.\n"
+        "An emphasis on user actions makes core functionality immediately apparent and provides "
+        "waypoints for the user.\n\n"
+
+        "Motion provides meaning.\n\n"
+
+        "Motion respects and reinforces the user as the prime mover. Primary user actions are "
+        "inflection points that initiate motion, transforming the whole design.\n"
+        "All action takes place in a single environment. Objects are presented to the user without "
+        "breaking the continuity of experience even as they transform and reorganize.\n"
+        "Motion is meaningful and appropriate, serving to focus attention and maintain continuity. "
+        "Feedback is subtle yet clear. Transitions are efﬁcient yet coherent.\n\n"
+
+        "3D world.\n\n"
+
+        "The material environment is a 3D space, which means all objects have x, y, and z "
+        "dimensions. The z-axis is perpendicularly aligned to the plane of the display, with the "
+        "positive z-axis extending towards the viewer. Every sheet of material occupies a single "
+        "position along the z-axis and has a standard 1dp thickness.\n"
+        "On the web, the z-axis is used for layering and not for perspective. The 3D world is "
+        "emulated by manipulating the y-axis.\n\n"
+
+        "Light and shadow.\n\n"
+
+        "Within the material environment, virtual lights illuminate the scene. Key lights create "
+        "directional shadows, while ambient light creates soft shadows from all angles.\n"
+        "Shadows in the material environment are cast by these two light sources. In Android "
+        "development, shadows occur when light sources are blocked by sheets of material at "
+        "various positions along the z-axis. On the web, shadows are depicted by manipulating the "
+        "y-axis only. The following example shows the card with a height of 6dp.\n\n"
+
+        "Resting elevation.\n\n"
+
+        "All material objects, regardless of size, have a resting elevation, or default elevation "
+        "that does not change. If an object changes elevation, it should return to its resting "
+        "elevation as soon as possible.\n\n"
+
+        "Component elevations.\n\n"
+
+        "The resting elevation for a component type is consistent across apps (e.g., FAB elevation "
+        "does not vary from 6dp in one app to 16dp in another app).\n"
+        "Components may have different resting elevations across platforms, depending on the depth "
+        "of the environment (e.g., TV has a greater depth than mobile or desktop).\n\n"
+
+        "Responsive elevation and dynamic elevation offsets.\n\n"
+
+        "Some component types have responsive elevation, meaning they change elevation in response "
+        "to user input (e.g., normal, focused, and pressed) or system events. These elevation "
+        "changes are consistently implemented using dynamic elevation offsets.\n"
+        "Dynamic elevation offsets are the goal elevation that a component moves towards, relative "
+        "to the component’s resting state. They ensure that elevation changes are consistent "
+        "across actions and component types. For example, all components that lift on press have "
+        "the same elevation change relative to their resting elevation.\n"
+        "Once the input event is completed or cancelled, the component will return to its resting "
+        "elevation.\n\n"
+
+        "Avoiding elevation interference.\n\n"
+
+        "Components with responsive elevations may encounter other components as they move between "
+        "their resting elevations and dynamic elevation offsets. Because material cannot pass "
+        "through other material, components avoid interfering with one another any number of ways, "
+        "whether on a per component basis or using the entire app layout.\n"
+        "On a component level, components can move or be removed before they cause interference. "
+        "For example, a floating action button (FAB) can disappear or move off screen before a "
+        "user picks up a card, or it can move if a snackbar appears.\n"
+        "On the layout level, design your app layout to minimize opportunities for interference. "
+        "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
+        "when a user tries to pick up one of cards.\n\n"
+    </string>
+    <string name="title_activity_device_management">DeviceManagementActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+
+</resources>

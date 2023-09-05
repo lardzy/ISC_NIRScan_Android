@@ -33,6 +33,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
@@ -73,6 +74,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.opencsv.CSVWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -375,6 +378,7 @@ public class ScanViewActivity extends Activity {
     private final OkHttpClient client = new OkHttpClient();
     private Boolean isPostSampleDataRunning = false;
     private ArrayList<FabricComponent> fabricComponents = new ArrayList<>();
+    private Button scan_barcode;
 
 
     //endregion
@@ -1308,7 +1312,8 @@ public class ScanViewActivity extends Activity {
     private void InitialFabricComposition(){
         // 获得下拉框内容
         SharedPreferences sharedPreferences = getSharedPreferences("my_preferences", MODE_PRIVATE);
-        String componentsString = sharedPreferences.getString("components", "");
+        String componentsString = sharedPreferences.getString("components", "桑蚕丝,乙纶,聚酯纤维" +
+                ",棉,氨纶,动物毛纤维,芳纶,锦纶,腈纶,再生纤维素纤维,醋纤,丙纶,海藻纤维,聚酰亚胺纤维,壳聚糖纤维,其他纤维");
         if (!componentsString.equals("")){
             components = new ArrayList<>(Arrays.asList(componentsString.split(",")));
             components.add(0, "");
@@ -1345,6 +1350,11 @@ public class ScanViewActivity extends Activity {
         imageButton_2 = (ImageButton) findViewById(R.id.imageButton_2);
         imageButton_3 = (ImageButton) findViewById(R.id.imageButton_3);
         imageButton_4 = (ImageButton) findViewById(R.id.imageButton_4);
+        scan_barcode = (Button) findViewById(R.id.scan_barcode);
+        scan_barcode.setOnClickListener(v -> {
+            // 这里放置扫描条形码的代码
+            scanBarcode();
+        });
         query_fabric_components = (Button) findViewById(R.id.query_fabric_components);
         query_fabric_components.setOnClickListener(v -> {
             // 这里放置查询纤维成分的代码
@@ -1475,6 +1485,26 @@ public class ScanViewActivity extends Activity {
         editTexts.add(editTextNumber_2);
         editTexts.add(editTextNumber_3);
         editTexts.add(editTextNumber_4);
+    }
+    // 初始化扫描界面
+    private void scanBarcode(){
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setOrientationLocked(false); // 允许屏幕旋转
+        integrator.setCaptureActivity(ScannerActivity.class); // 使用自定义的扫描Activity
+        integrator.initiateScan();
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(this, "扫描取消", Toast.LENGTH_LONG).show();
+            } else {
+                et_simple_number.setText(result.getContents());
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
     public int getMaxNumberFromFilenames() {
         int maxNumber = -1; // 初始化为-1，表示未找到任何匹配的整数
