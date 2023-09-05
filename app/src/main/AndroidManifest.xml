@@ -21,13 +21,9 @@
         android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
-        android:required="true" />
-    <uses-feature
-        android:name="android.hardware.camera"
         android:required="true" />
 
     <application
@@ -35,8 +31,7 @@
         android:icon="@mipmap/icon_isc_logo"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        tools:replace="android:appComponentFactory"
-        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+        tools:replace="allowBackup"
         android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
         <activity

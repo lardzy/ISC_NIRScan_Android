@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,9 +29,6 @@ import static com.ISCSDK.ISCNIRScanSDK.GetScanConfiguration;
 import static com.ISCSDK.ISCNIRScanSDK.storeStringPref;
 import static com.Innospectra.NanoScan.ScanViewActivity.isExtendVer;
 import static com.Innospectra.NanoScan.ScanViewActivity.isExtendVer_PLUS;
-
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 
 /**

@@ -2156,9 +2156,7 @@ public class ScanViewActivity extends Activity {
             return "聚酰亚胺纤维";
         } else if (fiberName.equals("壳聚糖纤维")){
             return "壳聚糖纤维";
-        }else if (fiberName.equals("腈纶")){
-            return "腈纶";
-        } else {
+        }else {
             return "其他纤维";
         }
     }
