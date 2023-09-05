@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +22,8 @@ import static com.ISCSDK.ISCNIRScanSDK.getBooleanPref;
 import static com.ISCSDK.ISCNIRScanSDK.storeBooleanPref;
 import static com.Innospectra.NanoScan.ScanViewActivity.isExtendVer;
 import static com.Innospectra.NanoScan.ScanViewActivity.isExtendVer_PLUS;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 /**
  * This activity controls the view for settings once the Nano is connected

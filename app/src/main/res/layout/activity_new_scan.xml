@@ -408,9 +408,9 @@
 
                     <TextView
                         android:id="@+id/tv_simple_number"
-                        android:layout_width="wrap_content"
+                        android:layout_width="40dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.9"
+                        android:layout_weight="0.1"
                         android:text="@string/simple_number"
                         android:textSize="18sp" />
 
@@ -431,6 +431,13 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.2"
                         android:text="@string/query_fabricComponents" />
+
+                    <Button
+                        android:id="@+id/scan_barcode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.9"
+                        android:text="@string/scan_barcode" />
 
                 </LinearLayout>
 

@@ -122,7 +122,7 @@
     <string name="scan_predict">扫描并预测</string>
     <string name="prefix">文件名前缀</string>
     <string name="file_number">文件名编号</string>
-    <string name="simple_number">样品编号</string>
+    <string name="simple_number">单号</string>
     <string name="data">Data</string>
     <string name="nano">Nano</string>
     <string name="save_to_sd">Save to SD Card?</string>
@@ -215,6 +215,7 @@
     <string name="activation">激活</string>
     <string name="add_fabricComponents">添加成分</string>
     <string name="query_fabricComponents">查询</string>
+    <string name="scan_barcode">扫描</string>
 
 
     <string-array name="scan_method_array">

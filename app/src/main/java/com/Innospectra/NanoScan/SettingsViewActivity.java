@@ -14,7 +14,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -32,6 +31,8 @@ import com.ISCSDK.ISCNIRScanSDK;
 
 import static com.ISCSDK.ISCNIRScanSDK.getStringPref;
 import static com.ISCSDK.ISCNIRScanSDK.storeStringPref;
+
+import androidx.core.content.ContextCompat;
 
 /**
  * This activity controls the view for global settings. These settings do not require a Nano
