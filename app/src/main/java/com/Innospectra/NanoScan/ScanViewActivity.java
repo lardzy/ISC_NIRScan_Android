@@ -160,9 +160,7 @@ public class ScanViewActivity extends Activity {
     private ArrayList<Entry> mReflectanceFloat;
     private ArrayList<Entry> mReferenceFloat;
     private ArrayList<Float> mWavelengthFloat;
-    // 下拉框纤维成分列表
     private ArrayList<String> components;
-    private Map<String, Integer> map;
 
     //! Tiva version is extend wavelength version or not
     public static Boolean isExtendVer = false;
@@ -2027,10 +2025,8 @@ public class ScanViewActivity extends Activity {
                                 JSONObject item = data.getJSONObject(i);
                                 String checkItemName = item.getString("CheckItemName");
                                 String checkResult = item.getString("CheckResult");
-                                String SampleIdentity = item.getString("SampleIdentity");
-                                System.out.println("checkResult:" + checkResult);
                                 if (checkItemName.equals("纤维含量")){
-                                    fabricComponents.add(new FabricComponent(checkResult, SampleIdentity));
+                                    fabricComponents.add(new FabricComponent(checkResult));
                                 }
                             }
                             // 在主线程中更新UI
@@ -2038,13 +2034,12 @@ public class ScanViewActivity extends Activity {
                         } else {
                             // TODO: 处理错误信息
                             String message = jsonResponse.getString("message");
-                            runOnUiThread(() -> Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show());
+                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                         }
                     }else {
-                        runOnUiThread(() -> Toast.makeText(mContext, "网络错误!" + response, Toast.LENGTH_SHORT).show());
+                        Toast.makeText(mContext, "网络错误：" + response, Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
-                    runOnUiThread(() -> Toast.makeText(mContext, "异常：" + e.getMessage(), Toast.LENGTH_SHORT).show());
                     e.printStackTrace();
                 }
                 runOnUiThread(() -> query_fabric_components.setEnabled(true));
@@ -2052,82 +2047,28 @@ public class ScanViewActivity extends Activity {
             }
         }).start();
     }
-    // 显示纤维成分列表，更新UI界面
+    // 显示纤维成分列表
     private void applyFabricComponents(){
         if (fabricComponents.size() == 1){
-            // 清空下拉框和文本框
-            clearUIComponents();
-            SelectedPart(0);
+            Iterator<Map.Entry<String, Double>> iterator = fabricComponents.get(0).getFiberComposition().entrySet().iterator();
+            for (int i = 0; i < editTexts.size() && iterator.hasNext(); i++) {
+                Map.Entry<String, Double> entry = iterator.next();
+                editTexts.get(i).setText(entry.getValue().toString());
+                //TODO: 将纤维名称归类到下拉框已有纤维种类中
+//                textileCompositions.get(i).setText(ClassificationOfFiberComponents(entry.getKey()));
 
+            }
         } else if (fabricComponents.size() > 1) {
             //TODO: 处理多个纤维成分的情况
-            clearUIComponents();
-            showFabricComponentDialog();
-
         }else {
             Toast.makeText(mContext, "未查询到纤维成分", Toast.LENGTH_SHORT).show();
             return;
         }
     }
-    // 选择纤维成分后，更新UI界面
-    private void SelectedPart(int num){
-        Iterator<Map.Entry<String, Double>> iterator = fabricComponents.get(num).getFiberComposition().entrySet().iterator();
-        for (int i = 0; i < editTexts.size() && iterator.hasNext(); i++) {
-            Map.Entry<String, Double> entry = iterator.next();
-            editTexts.get(i).setText(entry.getValue().toString());
-            //TODO: 将纤维名称归类到下拉框已有纤维种类中
-            textileCompositions.get(i).setSelection(
-                    ObtainFiberListSequence(ClassificationOfFiberComponents(entry.getKey())));
-        }
-    }
-    private void showFabricComponentDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        // 创建字符串列表来保存所有SampleIdentity
-        ArrayList<String> identities = new ArrayList<>();
-        for (FabricComponent component : fabricComponents) {
-            identities.add(component.getSampleIdentity());
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, identities);
-
-        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String selectedItem = fabricComponents.get(which).getSampleIdentity();
-                // 在这里处理你点击后的逻辑
-                SelectedPart(which);
-                Toast.makeText(getApplicationContext(), "你选择了: " + selectedItem, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        builder.show();
-    }
-
-
-    // 获得components中内容的序号
-    private int ObtainFiberListSequence(String s){
-        map = new HashMap<>();
-        for (int i = 0; i < components.size(); i++) {
-            map.put(components.get(i), i);
-        }
-        if (map.containsKey(s)){
-            return map.get(s);
-        }else {
-            return 0;
-        }
-    }
-    private void clearUIComponents(){
-        for (int i = 0; i < textileCompositions.size(); i++) {
-            textileCompositions.get(i).setSelection(0);
-        }
-        for (int i = 0; i < editTexts.size(); i++) {
-            editTexts.get(i).setText("");
-        }
-    }
     private String ClassificationOfFiberComponents(String fiberName){
         if (fiberName.equals("棉")){
             return "棉";
-        } else if (fiberName.equals("涤纶") || fiberName.equals("聚酯纤维") || fiberName
-                .equals("聚酯纤维(Polyester)")){
+        } else if (fiberName.equals("涤纶") || fiberName.equals("聚酯纤维")){
             return "聚酯纤维";
         } else if (fiberName.equals("氨纶")){
             return "氨纶";
@@ -2142,7 +2083,7 @@ public class ScanViewActivity extends Activity {
                 fiberName.equals("骆驼毛") || fiberName.equals("骆驼绒")) {
             return "动物毛纤维";
         } else if (fiberName.equals("再生纤维素纤维") ||fiberName.equals("莫代尔") || fiberName.equals("粘纤")
-                || fiberName.equals("莱赛尔") || fiberName.equals("再生纤维素纤维(Regenerated cellulose fibre)")) {
+                || fiberName.equals("莱赛尔")) {
             return "再生纤维素纤维";
         } else if (fiberName.equals("铜氨纤维")){
             return "铜氨纤维";
