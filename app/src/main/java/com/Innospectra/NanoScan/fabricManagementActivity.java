@@ -11,6 +11,7 @@ import android.widget.EditText;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class fabricManagementActivity extends Activity {
     private List<String> data = new ArrayList<>();
@@ -79,7 +80,8 @@ public class fabricManagementActivity extends Activity {
 
     private void loadData() {
         SharedPreferences sharedPreferences = getSharedPreferences("my_preferences", MODE_PRIVATE);
-        String componentsString = sharedPreferences.getString("components", "");
+        String componentsString = sharedPreferences.getString("components", "桑蚕丝,乙纶,聚酯纤维" +
+                ",棉,氨纶,动物毛纤维,芳纶,锦纶,腈纶,再生纤维素纤维,醋纤,丙纶,海藻纤维,聚酰亚胺纤维,壳聚糖纤维,其他纤维");
         System.out.println("存储数据：" + componentsString);
         if (!componentsString.equals("")){
             data = new ArrayList<>(Arrays.asList(componentsString.split(",")));
