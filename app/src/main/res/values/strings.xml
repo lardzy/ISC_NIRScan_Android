@@ -135,6 +135,7 @@
     <string name="double_side_scan">启用双面扫描？</string>
     <string name="user_name">检验员</string>
     <string name="verification_data">校验双面差异？</string>
+    <string name="withdraw_data">撤回当前扫描</string>
 
 
     <string name="model">Model Number</string>
