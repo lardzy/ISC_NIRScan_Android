@@ -14,6 +14,7 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,6 +24,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
@@ -378,7 +380,7 @@ public class ScanViewActivity extends Activity {
     private final OkHttpClient client = new OkHttpClient();
     private Boolean isPostSampleDataRunning = false;
     private ArrayList<FabricComponent> fabricComponents = new ArrayList<>();
-    private Button scan_barcode;
+    private Button scan_barcode, withdraw_button;
 
 
     //endregion
@@ -1350,6 +1352,20 @@ public class ScanViewActivity extends Activity {
         imageButton_2 = (ImageButton) findViewById(R.id.imageButton_2);
         imageButton_3 = (ImageButton) findViewById(R.id.imageButton_3);
         imageButton_4 = (ImageButton) findViewById(R.id.imageButton_4);
+        withdraw_button = (Button) findViewById(R.id.withdraw_button);
+        withdraw_button.setOnClickListener(v -> {
+            // 这里放置撤回的代码
+            new AlertDialog.Builder(ScanViewActivity.this)
+                    .setTitle("提示")
+                    .setMessage("是否撤回当前编号光谱文件？")
+                    .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            withdraw();
+                        }
+                    })
+                    .setNegativeButton("否", null).show();
+//            withdraw();
+        });
         scan_barcode = (Button) findViewById(R.id.scan_barcode);
         scan_barcode.setOnClickListener(v -> {
             // 这里放置扫描条形码的代码
@@ -1501,9 +1517,64 @@ public class ScanViewActivity extends Activity {
                 Toast.makeText(this, "扫描取消", Toast.LENGTH_LONG).show();
             } else {
                 et_simple_number.setText(result.getContents());
+                et_simple_number.onEditorAction(EditorInfo.IME_ACTION_DONE);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+    private void withdraw(){
+        String targetFileNamePart = et_simple_number.getText().toString();
+        boolean isFileFound = false;
+        // 处理输入的样品编号
+        if (targetFileNamePart.isEmpty()) {
+            Toast.makeText(mContext, "请输入样品编号", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // 检查样品编号是否合理
+        if (!targetFileNamePart.matches("^\\d{2}.\\d{6}.*")){
+            Toast.makeText(mContext, "请输入正确的样品编号", Toast.LENGTH_SHORT).show();
+            et_simple_number.setError("请填写正确的样品编号！");
+            return;
+        }else {
+            targetFileNamePart = targetFileNamePart.substring(0, 9);
+            // 只保留样品编号的前9位
+            et_simple_number.setText(targetFileNamePart);
+        }
+        // 使用MediaStore API查找符合条件的文件
+        String selection = MediaStore.MediaColumns.RELATIVE_PATH + "=? AND " +
+                MediaStore.MediaColumns.DISPLAY_NAME + " LIKE ?";
+        String[] selectionArgs = {
+                Environment.DIRECTORY_DOCUMENTS + "/ISC_Report/",
+                "%" + targetFileNamePart + "%.csv"
+        };
+        Uri queryUri = MediaStore.Files.getContentUri("external");
+        Cursor cursor = getContentResolver().query(queryUri, null, selection, selectionArgs, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int idColumnIndex = cursor.getColumnIndex(MediaStore.MediaColumns._ID);
+
+            if(idColumnIndex == -1) {
+                // Handle error: The _ID column doesn't exist in the results.
+                return;
+            }
+
+            do {
+                Uri fileUri = ContentUris.withAppendedId(queryUri, cursor.getLong(idColumnIndex));
+
+                // 更新文件的路径
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS + "/ISC_Report/recycle/");
+                getContentResolver().update(fileUri, values, null, null);
+                isFileFound = true;
+            } while (cursor.moveToNext());
+
+            cursor.close();
+        }
+        if (isFileFound) {
+            Toast.makeText(ScanViewActivity.this, "文件已撤回到回收站", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(ScanViewActivity.this, "没有找到匹配的文件", Toast.LENGTH_SHORT).show();
         }
     }
     public int getMaxNumberFromFilenames() {

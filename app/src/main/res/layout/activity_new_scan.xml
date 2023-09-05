@@ -472,6 +472,13 @@
                         android:inputType="number"
                         android:singleLine="true" />
 
+                    <Button
+                        android:id="@+id/withdraw_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.2"
+                        android:text="@string/withdraw_data" />
+
                 </LinearLayout>
 
                 <View
