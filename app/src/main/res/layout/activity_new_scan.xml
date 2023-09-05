@@ -77,12 +77,6 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="成分" />
-
                 <Spinner
                     android:id="@+id/textileComposition"
                     android:layout_width="wrap_content"
@@ -141,13 +135,6 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/comp_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="成分" />
-
                 <Spinner
                     android:id="@+id/textileComposition_1"
                     android:layout_width="wrap_content"
@@ -203,13 +190,6 @@
                     android:text="3."
                     android:textColor="#FE8700"
                     android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/comp_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="成分" />
 
                 <Spinner
                     android:id="@+id/textileComposition_2"
@@ -267,13 +247,6 @@
                     android:textColor="#FE8700"
                     android:textSize="16sp" />
 
-                <TextView
-                    android:id="@+id/comp_4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="成分" />
-
                 <Spinner
                     android:id="@+id/textileComposition_3"
                     android:layout_width="wrap_content"
@@ -329,13 +302,6 @@
                     android:text="5."
                     android:textColor="#FE8700"
                     android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/comp_5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="成分" />
 
                 <Spinner
                     android:id="@+id/textileComposition_4"
