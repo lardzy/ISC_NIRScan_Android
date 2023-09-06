@@ -18,6 +18,7 @@ public class FabricComponent {
 
             while (matcher.find()) {
                 System.out.println(matcher.group(1).trim() + " " + matcher.group(2).trim());
+                // 将匹配到的字符串存入LinkedHashMap中
                 fiberComposition.put(matcher.group(1).trim(), Double.parseDouble(matcher.group(2).trim()));
             }
 
