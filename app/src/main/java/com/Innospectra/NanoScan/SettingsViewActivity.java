@@ -14,7 +14,9 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -32,6 +34,17 @@ import com.ISCSDK.ISCNIRScanSDK;
 
 import static com.ISCSDK.ISCNIRScanSDK.getStringPref;
 import static com.ISCSDK.ISCNIRScanSDK.storeStringPref;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * This activity controls the view for global settings. These settings do not require a Nano
@@ -57,7 +70,7 @@ public class SettingsViewActivity extends Activity {
     private Switch switchForAdministrator;
     private String API_URL, API_KEY;
     private boolean isPasswordDialogShown = false;
-
+    private Button btn_packed_file;
 
 
     @Override
@@ -88,6 +101,8 @@ public class SettingsViewActivity extends Activity {
         btn_set_api_url.setOnClickListener(btn_set_api_url_OnClickListener);
         btn_set_api_key.setOnClickListener(btn_set_key_OnClickListener);
         switchForAdministrator = (Switch)findViewById(R.id.switchForAdministrator);
+        btn_packed_file = (Button)findViewById(R.id.btn_packed_file);
+        btn_packed_file.setOnClickListener(btn_packed_file_OnClickListener);
         // 载入管理员状态
         loadAdministratorStatus();
 
@@ -100,6 +115,89 @@ public class SettingsViewActivity extends Activity {
                 }
             }
         });
+    }
+    private View.OnClickListener btn_packed_file_OnClickListener = new View.OnClickListener()
+    {
+        @Override
+        public void onClick(View view) {
+            new AlertDialog.Builder(SettingsViewActivity.this)
+                    .setTitle("提示")
+                    .setMessage("是否导出？")
+                    .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            exportFiles();
+                        }
+                    })
+                    .setNegativeButton("否", null).show();
+        }
+    };
+    private void exportFiles(){
+        // 步骤1：创建一个位于Documents/ISC_Report/日期的文件夹
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String dateFolderName = sdf.format(new Date());
+        File mainDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "ISC_Report");
+        File dateDirectory = new File(mainDirectory, dateFolderName);
+        if (!dateDirectory.exists()) {
+            dateDirectory.mkdirs();
+        }
+
+        // 步骤2：将Documents/ISC_Report/下的所有csv文件移动到Documents/ISC_Report/日期下
+        File[] files = mainDirectory.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".csv");
+            }
+        });
+
+        if (files != null) {
+            for (File file : files) {
+                file.renameTo(new File(dateDirectory, file.getName()));
+            }
+        }
+        Toast.makeText(SettingsViewActivity.this, "成功导出文件数量：" + files.length, Toast.LENGTH_SHORT).show();
+        // 步骤3：将Documents/ISC_Report/日期下的所有文件压缩成zip文件
+        File zipFile = new File(mainDirectory, dateFolderName + ".zip");
+        try {
+            zipDirectory(dateDirectory, zipFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(SettingsViewActivity.this, "导出失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 步骤4：分享Documents/ISC_Report/日期.zip
+        shareFile(zipFile);
+//        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//        intent.setDataAndType(Uri.parse(mainDirectory.getAbsolutePath()), "*/*");
+//        startActivity(Intent.createChooser(intent, "Open folder"));
+    }
+    private void shareFile(File file) {
+        Uri fileUri = android.support.v4.content.FileProvider.getUriForFile(SettingsViewActivity.this, "com.Innospectra.NanoScan.file-provider", file);
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+        shareIntent.setType("application/zip");
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(shareIntent, "分享文件"));
+    }
+    private void zipDirectory(File directory, File zipFile) throws IOException {
+        FileOutputStream fos = new FileOutputStream(zipFile);
+        ZipOutputStream zos = new ZipOutputStream(fos);
+        File[] files = directory.listFiles();
+        for (File file : files) {
+            FileInputStream fis = new FileInputStream(file);
+            ZipEntry zipEntry = new ZipEntry(file.getName());
+            zos.putNextEntry(zipEntry);
+            byte[] bytes = new byte[1024];
+            int length;
+            while ((length = fis.read(bytes)) >= 0) {
+                zos.write(bytes, 0, length);
+            }
+            fis.close();
+        }
+        zos.closeEntry();
+        zos.close();
+        fos.close();
     }
     private void showPasswordDialog() {
         isPasswordDialogShown = true;

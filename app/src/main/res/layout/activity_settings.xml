@@ -264,7 +264,32 @@
         android:id="@+id/viewForAPI3"
         android:layout_width="wrap_content"
         android:layout_height="1px"
-        android:layout_below="@id/viewForAPI"
+        android:layout_below="@id/rl_set_key"
         android:background="#3E3E3E" />
+
+    <RelativeLayout
+        android:id="@+id/rl_packed_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_set_key"
+        android:paddingTop="@dimen/dip8">
+
+        <Button
+            android:id="@+id/btn_packed_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="导出" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="@string/packed_file"
+            android:textColor="@color/black" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

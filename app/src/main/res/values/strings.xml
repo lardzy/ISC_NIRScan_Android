@@ -39,6 +39,7 @@
     <string name="administratorMode">启用管理员模式</string>
     <string name="api_url">设置API接口地址</string>
     <string name="api_key">设置API密钥</string>
+    <string name="packed_file">导出光谱数据</string>
 
 
 

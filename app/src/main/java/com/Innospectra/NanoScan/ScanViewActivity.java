@@ -141,7 +141,6 @@ import okhttp3.Response;
  */
 public class ScanViewActivity extends Activity {
 
-
     //region parameter
     private static Context mContext;
     private ProgressDialog barProgressDialog;
@@ -185,7 +184,6 @@ public class ScanViewActivity extends Activity {
         WarmDevice,ManualLamp,CloseWarmUpLampInScan
     }
     //endregion
-
     //region broadcast parameter
     private final BroadcastReceiver ScanDataReadyReceiver = new ScanDataReadyReceiver();
     private final BroadcastReceiver RefDataReadyReceiver = new RefDataReadyReceiver();
@@ -334,7 +332,6 @@ public class ScanViewActivity extends Activity {
     private Button btn_quickset_continuous_scan_stop;
     private Button btn_quickset_set_config;
     private Button query_fabric_components;
-
     int quickset_scan_method_index =0;
     int quickset_exposure_time_index =0;
     int quickset_scan_width_index = 2;
@@ -619,7 +616,6 @@ public class ScanViewActivity extends Activity {
                 public void run() {
                     mBluetoothLeScanner.stopScan(mPreferredLeScanCallback);
                     if (!connected) {
-
                         scanLeDevice(true);
                     }
                 }
@@ -834,7 +830,6 @@ public class ScanViewActivity extends Activity {
             ISCNIRScanSDK.GetDeviceInfo();
         }
     }
-
     String model_name="";
     String serial_num = "";
     String HWrev = "";
@@ -1106,7 +1101,6 @@ public class ScanViewActivity extends Activity {
      * Get the activate state of the device(ISCNIRScanSDK.ReadActivateState() should be called)
      */
     public class RetrunReadActivateStatusReceiver extends BroadcastReceiver {
-
         public void onReceive(Context context, Intent intent) {
             if(mainflag!="")//Only from HomeViewActivity->ScanViewActivity should do this
             {
@@ -1218,10 +1212,8 @@ public class ScanViewActivity extends Activity {
             ab.setDisplayHomeAsUpEnabled(true);
             ab.setTitle(getString(R.string.new_scan));
             ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
             mViewPager = (ViewPager) findViewById(R.id.viewpager);
             mViewPager.setOffscreenPageLimit(2);
-
             // Create a tab listener that is called when the user changes tabs.
             ActionBar.TabListener tl = new ActionBar.TabListener() {
                 @Override
@@ -1273,7 +1265,6 @@ public class ScanViewActivity extends Activity {
         mMenu.findItem(R.id.action_key).setEnabled(false);
         return true;
     }
-
     /**
      * Handle the selection of a menu item.
      * In this case, the user has the ability to access settings while the Nano is connected
@@ -1291,7 +1282,6 @@ public class ScanViewActivity extends Activity {
             LocalBroadcastManager.getInstance(mContext).unregisterReceiver(GetActiveScanConfReceiver);
             LocalBroadcastManager.getInstance(mContext).unregisterReceiver(WriteScanConfigStatusReceiver);
             LocalBroadcastManager.getInstance(mContext).unregisterReceiver(GetDeviceStatusReceiver);
-
             Intent configureIntent = new Intent(mContext, ConfigureViewActivity.class);
             startActivity(configureIntent);
         }
@@ -1326,7 +1316,6 @@ public class ScanViewActivity extends Activity {
         SharedPreferences sharedPreferences1 = getSharedPreferences("switch_status", MODE_PRIVATE);
         doubleSidedScanning = sharedPreferences1.getBoolean("switch_status",true);
 
-//        System.out.println("读取到纤维长度：" +components.size());
         if (components != null){
             for (int i = 0; i < components.size(); i++) {
                 System.out.println("读取到纤维列表：" + components.get(i));
@@ -1479,13 +1468,11 @@ public class ScanViewActivity extends Activity {
                 validateInput(s.toString(), editTextNumber_4);
             }
         });
-
         imageButton.setOnClickListener(v -> editTextNumber.setText(""));
         imageButton_1.setOnClickListener(v -> editTextNumber_1.setText(""));
         imageButton_2.setOnClickListener(v -> editTextNumber_2.setText(""));
         imageButton_3.setOnClickListener(v -> editTextNumber_3.setText(""));
         imageButton_4.setOnClickListener(v -> editTextNumber_4.setText(""));
-
         textileCompositions.add(textileComposition);
         textileCompositions.add(textileComposition_1);
         textileCompositions.add(textileComposition_2);
@@ -1696,7 +1683,6 @@ public class ScanViewActivity extends Activity {
         et_normal_scan_repeat = (EditText) findViewById(R.id.et_normal_repeat);
         btn_normal_continuous_stop = (Button)findViewById(R.id.btn_continuous_stop);
         et_simple_number = (EditText) findViewById(R.id.et_simple_number);
-
         et_simple_number.setOnTouchListener(et_simple_number_OnTouch);
         et_simple_number.addTextChangedListener(et_simple_number_OnTextChange);
         et_simple_number.setOnEditorActionListener(et_simple_number_OnEdit);
@@ -1732,7 +1718,6 @@ public class ScanViewActivity extends Activity {
         btn_quickset_continuous_scan_stop = (Button)findViewById(R.id.btn_continuous_stop_quick);
         btn_quickset_set_config = (Button)findViewById(R.id.btn_set_value);
         tv_quickset_res = (TextView)findViewById(R.id.tv_res);
-
         et_quickset_lamptime.setOnEditorActionListener(Quickset_Lamp_Time_OnEditor);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.scan_method_array, android.R.layout.simple_spinner_item);
@@ -1756,7 +1741,6 @@ public class ScanViewActivity extends Activity {
         et_quickset_continuous_scan_repeat.setOnEditorActionListener(QuickSet_Continuous_Scan_Repeat_OnEdit);
         btn_quickset_continuous_scan_stop.setOnClickListener(Continuous_Scan_Stop_Click);
         btn_quickset_set_config.setOnClickListener(Quickset_Set_Config_Click);
-
         quickset_init_start_nm = (Integer.parseInt(et_quickset_spec_start.getText().toString()));
         quickset_init_end_nm = (Integer.parseInt(et_quickset_spec_end.getText().toString()));
         quickset_init_res = (Integer.parseInt(et_quickset_res.getText().toString()));
@@ -1832,8 +1816,6 @@ public class ScanViewActivity extends Activity {
         imageButton_3.setEnabled(false);
         imageButton_4.setEnabled(false);
 
-        // layout = (LinearLayout) findViewById(R.id.ll_os);
-        // DisableLinearComponet(layout);
         layout = (LinearLayout) findViewById(R.id.ll_doubleSideScan);
         DisableLinearComponet(layout);
         layout = (LinearLayout) findViewById(R.id.ly_normal_interval_time);
@@ -1946,8 +1928,6 @@ public class ScanViewActivity extends Activity {
         imageButton_2.setEnabled(true);
         imageButton_3.setEnabled(true);
         imageButton_4.setEnabled(true);
-        // layout = (LinearLayout) findViewById(R.id.ll_os);
-        // EnableLinearComponet(layout);
         layout = (LinearLayout) findViewById(R.id.ll_doubleSideScan);
         EnableLinearComponet(layout);
         layout = (LinearLayout) findViewById(R.id.ly_normal_interval_time);
@@ -2234,8 +2214,6 @@ public class ScanViewActivity extends Activity {
 
         builder.show();
     }
-
-
     // 获得components中内容的序号， 并查询纤维列表（用户录入）中是否有该纤维
     private int ObtainFiberListSequence(String s){
         map = new HashMap<>();
@@ -5286,7 +5264,6 @@ public class ScanViewActivity extends Activity {
      * and display a toast message
      */
     public class DisconnReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             Toast.makeText(mContext, R.string.nano_disconnected, Toast.LENGTH_SHORT).show();

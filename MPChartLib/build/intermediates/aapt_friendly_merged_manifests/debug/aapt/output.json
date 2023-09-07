@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "applicationId": "com.github.mikephil.charting",
+  "variantType": "LIBRARY",
+  "elements": [
+    {
+      "outputType": {
+        "type": "AAPT_FRIENDLY_MERGED_MANIFESTS"
+      },
+      "apkData": {
+        "type": "MAIN",
+        "splits": [],
+        "versionCode": 3,
+        "versionName": "3.0.3",
+        "outputFile": "MPChartLib-debug.aar",
+        "fullName": "debug",
+        "baseName": "debug",
+        "dirName": ""
+      },
+      "path": "AndroidManifest.xml",
+      "properties": {
+        "packageId": "com.github.mikephil.charting",
+        "split": ""
+      }
+    }
+  ]
+}
