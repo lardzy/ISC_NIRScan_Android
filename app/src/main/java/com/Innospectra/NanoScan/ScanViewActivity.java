@@ -1315,7 +1315,7 @@ public class ScanViewActivity extends Activity {
         // 获得下拉框内容
         SharedPreferences sharedPreferences = getSharedPreferences("my_preferences", MODE_PRIVATE);
         String componentsString = sharedPreferences.getString("components", "桑蚕丝,乙纶,聚酯纤维" +
-                ",棉,氨纶,动物毛纤维,芳纶,锦纶,腈纶,再生纤维素纤维,醋纤,丙纶,海藻纤维,聚酰亚胺纤维,壳聚糖纤维,其他纤维");
+                ",棉,氨纶,动物毛纤维,芳纶,锦纶,腈纶,再生纤维素纤维,醋纤,丙纶,海藻纤维,聚酰亚胺纤维,壳聚糖纤维");
         if (!componentsString.equals("")){
             components = new ArrayList<>(Arrays.asList(componentsString.split(",")));
             components.add(0, "");
@@ -1541,41 +1541,67 @@ public class ScanViewActivity extends Activity {
             // 只保留样品编号的前9位
             et_simple_number.setText(targetFileNamePart);
         }
-        // 使用MediaStore API查找符合条件的文件
-        String selection = MediaStore.MediaColumns.RELATIVE_PATH + "=? AND " +
-                MediaStore.MediaColumns.DISPLAY_NAME + " LIKE ?";
-        String[] selectionArgs = {
-                Environment.DIRECTORY_DOCUMENTS + "/ISC_Report/",
-                "%" + targetFileNamePart + "%.csv"
-        };
-        Uri queryUri = MediaStore.Files.getContentUri("external");
-        Cursor cursor = getContentResolver().query(queryUri, null, selection, selectionArgs, null);
 
-        if (cursor != null && cursor.moveToFirst()) {
-            int idColumnIndex = cursor.getColumnIndex(MediaStore.MediaColumns._ID);
+        //TODO: 为安卓不同版本做出适配
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // 适用于 Android 10 或者更高
+            // 使用MediaStore API查找符合条件的文件
+            String selection = MediaStore.MediaColumns.RELATIVE_PATH + "=? AND " +
+                    MediaStore.MediaColumns.DISPLAY_NAME + " LIKE ?";
+            String[] selectionArgs = {
+                    Environment.DIRECTORY_DOCUMENTS + "/ISC_Report/",
+                    "%" + targetFileNamePart + "%.csv"
+            };
+            Uri queryUri = MediaStore.Files.getContentUri("external");
+            Cursor cursor = getContentResolver().query(queryUri, null, selection, selectionArgs, null);
 
-            if(idColumnIndex == -1) {
-                // Handle error: The _ID column doesn't exist in the results.
-                return;
+            if (cursor != null && cursor.moveToFirst()) {
+                int idColumnIndex = cursor.getColumnIndex(MediaStore.MediaColumns._ID);
+
+                if(idColumnIndex == -1) {
+                    // Handle error: The _ID column doesn't exist in the results.
+                    return;
+                }
+                do {
+                    Uri fileUri = ContentUris.withAppendedId(queryUri, cursor.getLong(idColumnIndex));
+
+                    // 更新文件的路径
+                    ContentValues values = new ContentValues();
+                    values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS + "/ISC_Report/recycle/");
+                    getContentResolver().update(fileUri, values, null, null);
+                    isFileFound = true;
+                } while (cursor.moveToNext());
+
+                cursor.close();
             }
 
-            do {
-                Uri fileUri = ContentUris.withAppendedId(queryUri, cursor.getLong(idColumnIndex));
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){ // 当安卓版本低于安卓Q
+            System.out.println("安卓版本低于安卓Q:Build.VERSION.SDK_INT = " + Build.VERSION.SDK_INT);
+            File directory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "ISC_Report");
+            File[] files = directory.listFiles();
 
-                // 更新文件的路径
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS + "/ISC_Report/recycle/");
-                getContentResolver().update(fileUri, values, null, null);
-                isFileFound = true;
-            } while (cursor.moveToNext());
+            isFileFound = false;
 
-            cursor.close();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.getName().contains(targetFileNamePart) && file.getName().endsWith(".csv")) {
+                        isFileFound = true;
+                        File recycleDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "ISC_Report/recycle");
+                        if (!recycleDirectory.exists()) {
+                            recycleDirectory.mkdirs();
+                        }
+                        file.renameTo(new File(recycleDirectory, file.getName()));
+                    }
+                }
+            }
+
         }
         if (isFileFound) {
             Toast.makeText(ScanViewActivity.this, "文件已撤回到回收站", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(ScanViewActivity.this, "没有找到匹配的文件", Toast.LENGTH_SHORT).show();
         }
+
     }
     public int getMaxNumberFromFilenames() {
         int maxNumber = -1; // 初始化为-1，表示未找到任何匹配的整数
@@ -2139,10 +2165,10 @@ public class ScanViewActivity extends Activity {
                         } else {
                             // TODO: 处理错误信息
                             String message = jsonResponse.getString("message");
-                            runOnUiThread(() -> Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show());
+                            runOnUiThread(() -> Toast.makeText(mContext, "查询不成功：" + message, Toast.LENGTH_SHORT).show());
                         }
                     }else {
-                        runOnUiThread(() -> Toast.makeText(mContext, "网络错误!" + response, Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() -> Toast.makeText(mContext, "网络错误：" + response, Toast.LENGTH_SHORT).show());
                     }
                 } catch (Exception e) {
                     runOnUiThread(() -> Toast.makeText(mContext, "异常：" + e.getMessage(), Toast.LENGTH_SHORT).show());
@@ -2172,24 +2198,30 @@ public class ScanViewActivity extends Activity {
     }
     // 选择纤维成分后，更新UI界面
     private void SelectedPart(int num){
+
         Iterator<Map.Entry<String, Double>> iterator = fabricComponents.get(num).getFiberComposition().entrySet().iterator();
+
         for (int i = 0; i < editTexts.size() && iterator.hasNext(); i++) {
+            // 将接口返回的纤维名称使用Map.Entry遍历
             Map.Entry<String, Double> entry = iterator.next();
+            // 将接口返回的纤维含量显示到对应的EditText中
             editTexts.get(i).setText(entry.getValue().toString());
-            //TODO: 将纤维名称归类到下拉框已有纤维种类中
+            //TODO: 将纤维名称归类到下拉框已有纤维种类中，并显示到对应的下拉框中
             textileCompositions.get(i).setSelection(
                     ObtainFiberListSequence(ClassificationOfFiberComponents(entry.getKey())));
         }
     }
+    // 当返回的结果有多个部位时，提示用户选择
     private void showFabricComponentDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // 创建字符串列表来保存所有SampleIdentity
         ArrayList<String> identities = new ArrayList<>();
+        // 遍历fabricComponents，将所有SampleIdentity添加到identities中
         for (FabricComponent component : fabricComponents) {
             identities.add(component.getSampleIdentity());
         }
+        // 将identities转换为ArrayAdapter
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, identities);
-
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -2204,7 +2236,7 @@ public class ScanViewActivity extends Activity {
     }
 
 
-    // 获得components中内容的序号
+    // 获得components中内容的序号， 并查询纤维列表（用户录入）中是否有该纤维
     private int ObtainFiberListSequence(String s){
         map = new HashMap<>();
         for (int i = 0; i < components.size(); i++) {
@@ -2257,6 +2289,8 @@ public class ScanViewActivity extends Activity {
             return "聚酰亚胺纤维";
         } else if (fiberName.equals("壳聚糖纤维")){
             return "壳聚糖纤维";
+        }else if (fiberName.equals("腈纶")){
+            return "腈纶";
         }else {
             return "其他纤维";
         }
